@@ -1,7 +1,7 @@
 // Edit this file in GitHub to publish your Valentine website.
 // Keep image/audio files in the assets/ folder and use paths such as "assets/hero.jpg".
 window.SITE_DATA = {
-  "heroTitle": "hello test ♥",
+  "heroTitle": "Hello Aizen ♥",
   "heroTo": "To My Favorite Person",
   "heroSubtitle": "Every moment with you is a memory I never want to forget.",
   "name": "[Your Name]",
