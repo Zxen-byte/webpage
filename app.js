@@ -284,7 +284,8 @@ document.body.classList.remove("lightbox-open");
 document.body.style.overflow="";
 render();
 observeReveals();
-makeParticles();\nhydrateMedia();
+makeParticles();
+hydrateMedia();
 window.addEventListener("pageshow",()=>{
   const box=document.getElementById("lightbox");
   if(box)box.hidden=true;
