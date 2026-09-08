@@ -33,7 +33,22 @@ function render(){
  renderGallery();renderTimeline();renderReasons();renderEditorLists();updateCounter();renderAudio();
  document.querySelectorAll("[data-style]").forEach(el=>el.value=data.settings[el.dataset.style]||"");
 }
-function setImage(id,src,placeholder){const im=document.getElementById(id),ph=document.getElementById(placeholder);if(src){im.src=src;im.hidden=false;ph.hidden=true}else{im.hidden=true;ph.hidden=false}}
+function setImage(id,src,placeholder){
+  const im=document.getElementById(id),ph=document.getElementById(placeholder);
+  const showPlaceholder=()=>{
+    im.hidden=true;
+    im.removeAttribute("src");
+    ph.hidden=false;
+  };
+  im.onerror=showPlaceholder;
+  if(src){
+    im.hidden=false;
+    ph.hidden=true;
+    im.src=src;
+  }else{
+    showPlaceholder();
+  }
+}
 function renderGallery(){
  const g=document.getElementById("gallery");
  if(!data.memories.length){g.innerHTML=`<div class="empty" style="column-span:all;text-align:center;padding:70px;background:#fff;border:1px dashed var(--line);border-radius:24px"><h3 style="font-family:var(--heading);font-size:34px;color:var(--primary2)">Your memories will live here ♥</h3><p class="muted">Start adding your favorite moments together.</p><button class="primary-btn" onclick="openEditor('memoriesTab')">Add Your First Photo</button></div>`;return}
