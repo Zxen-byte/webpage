@@ -1,7 +1,7 @@
-// GITHUB PUBLISH FILE
-// Edit this file in GitHub. Keep media in assets/ and use paths like "assets/hero.jpg".
+// Edit this file in GitHub to publish your Valentine website.
+// Keep image/audio files in the assets/ folder and use paths such as "assets/hero.jpg".
 window.SITE_DATA = {
-  "heroTitle": "Happy Valentine's Day ♥",
+  "heroTitle": "hello test ♥",
   "heroTo": "To My Favorite Person",
   "heroSubtitle": "Every moment with you is a memory I never want to forget.",
   "name": "[Your Name]",
@@ -18,11 +18,33 @@ window.SITE_DATA = {
   "backgroundAudio": "",
   "backgroundMusicEnabled": true,
   "backgroundMusicVolume": 0.18,
-  "settings": {"primary":"#8b1e3f","background":"#fff9f5","text":"#34272b","heading":"Georgia,serif","body":"'Trebuchet MS',sans-serif","mood":"petals"},
+  "settings": {
+    "primary": "#8b1e3f",
+    "background": "#fff9f5",
+    "text": "#34272b",
+    "heading": "Georgia,serif",
+    "body": "'Trebuchet MS',sans-serif",
+    "mood": "petals"
+  },
   "memories": [],
-  "reasons": ["Your smile","Your laugh","The way you care about people","The way you make ordinary days special"],
+  "reasons": [
+    "Your smile",
+    "Your laugh",
+    "The way you care about people",
+    "The way you make ordinary days special"
+  ],
   "events": [
-    {"date":"2023","title":"The Beginning","description":"Somehow, two people met and started a story neither of us expected.","image":""},
-    {"date":"2024","title":"Our Favorite Memories","description":"Every day with you became another reason to smile.","image":""}
+    {
+      "date": "2023",
+      "title": "The Beginning",
+      "description": "Somehow, two people met and started a story neither of us expected.",
+      "image": ""
+    },
+    {
+      "date": "2024",
+      "title": "Our Favorite Memories",
+      "description": "Every day with you became another reason to smile.",
+      "image": ""
+    }
   ]
 };
