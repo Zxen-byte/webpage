@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<audio id="backgroundAudio" loop preload="auto" aria-hidden="true"></audio>
 <div id="particles" aria-hidden="true"></div>
 
 <header class="site-header">
@@ -130,7 +131,8 @@
     <hr><div class="panel-actions"><button class="secondary-btn" id="addReason">+ Add Reason</button><button class="secondary-btn" id="addEvent">+ Add Story Event</button></div>
     <div id="reasonEditorList"></div><div id="eventEditorList"></div>
     <hr><label>Hero / final photo <span class="upload-btn">Choose image<input id="heroUpload" type="file" accept="image/*" hidden></span></label>
-    <label>Local song <span class="upload-btn">Choose audio<input id="audioUpload" type="file" accept="audio/*" hidden></span></label>
+    <label>Our Song file <span class="upload-btn">Choose audio<input id="audioUpload" type="file" accept="audio/*" hidden></span></label>
+    <hr><div class="music-settings"><strong>Background music</strong><p class="muted">Plays softly after your first tap/click. Browsers block sound from starting before user interaction.</p><label class="check-row"><input id="backgroundMusicToggle" type="checkbox"> Enable background music</label><label>Volume<input id="backgroundMusicVolume" type="range" min="0" max="0.5" step="0.01" value="0.18"></label><div class="panel-actions"><label class="upload-btn">Choose background song<input id="backgroundAudioUpload" type="file" accept="audio/*" hidden></label><button class="danger-btn" id="removeBackgroundAudio" type="button">Remove</button></div></div>
   </div>
 
   <div id="tab-style" class="tab-panel">

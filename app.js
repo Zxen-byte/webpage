@@ -5,7 +5,7 @@ name:"[Your Name]",letter:`<p><em>My love,</em></p><p>I don't always know how to
 secret:"You are one of the best things that ever happened to me. No matter where life takes us, I hope we keep choosing each other.",
 songText:"This song always reminds me of you.",songLink:"",metDate:"2024-06-14T19:00",anniversary:"",
 finalMessage:"If I could choose one person to make memories with over and over again, I would choose you every single time.",
-heroImage:"",audio:"",settings:{primary:"#8b1e3f",background:"#fff9f5",text:"#34272b",heading:"Georgia,serif",body:"'Trebuchet MS',sans-serif",mood:"petals"},
+heroImage:"",audio:"",backgroundAudio:"",backgroundMusicEnabled:true,backgroundMusicVolume:0.18,settings:{primary:"#8b1e3f",background:"#fff9f5",text:"#34272b",heading:"Georgia,serif",body:"'Trebuchet MS',sans-serif",mood:"petals"},
 memories:[],reasons:["Your smile","Your laugh","The way you care about people","The way you make ordinary days special"],
 events:[
  {date:"2023",title:"The Beginning",description:"Somehow, two people met and started a story neither of us expected.",image:""},
@@ -30,8 +30,10 @@ function render(){
  const sl=document.getElementById("songLink");sl.href=data.songLink||"#";sl.hidden=!data.songLink;
  document.getElementById("finalMessage").textContent=data.finalMessage;document.getElementById("finalSignature").textContent=data.name;
  setImage("heroImage",data.heroImage,"heroPlaceholder");
- renderGallery();renderTimeline();renderReasons();renderEditorLists();updateCounter();renderAudio();
+ renderGallery();renderTimeline();renderReasons();renderEditorLists();updateCounter();renderAudio();renderBackgroundMusic();
  document.querySelectorAll("[data-style]").forEach(el=>el.value=data.settings[el.dataset.style]||"");
+ const bmToggle=document.getElementById("backgroundMusicToggle");if(bmToggle)bmToggle.checked=data.backgroundMusicEnabled!==false;
+ const bmVol=document.getElementById("backgroundMusicVolume");if(bmVol)bmVol.value=String(data.backgroundMusicVolume??.18);
 }
 function setImage(id,src,placeholder){
   const im=document.getElementById(id),ph=document.getElementById(placeholder);
@@ -78,6 +80,18 @@ function updateCounter(){
  document.getElementById("anniversaryText").textContent=data.anniversary?`Our anniversary ♥ ${new Date(data.anniversary+"T00:00").toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"})}`:"";
 }
 function renderAudio(){const a=document.getElementById("audio");if(data.audio){a.src=data.audio;a.hidden=false}else{a.removeAttribute("src");a.hidden=!data.songLink}}
+function renderBackgroundMusic(){
+  const a=document.getElementById("backgroundAudio");
+  if(!a)return;
+  if(data.backgroundAudio){a.src=data.backgroundAudio;a.volume=Math.max(0,Math.min(1,Number(data.backgroundMusicVolume??.18)));a.loop=true}
+  else{a.pause();a.removeAttribute("src")}
+}
+async function startBackgroundMusic(){
+  const a=document.getElementById("backgroundAudio");
+  if(!a||!data.backgroundAudio||data.backgroundMusicEnabled===false||!a.paused)return;
+  try{await a.play()}catch{}
+}
+
 function observeReveals(){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visible");io.unobserve(e.target)}}),{threshold:.08});document.querySelectorAll(".reveal:not(.visible)").forEach(x=>io.observe(x))}
 function openEditor(tab="content"){draft=structuredClone(data);document.getElementById("editor").classList.add("open");document.getElementById("editor").setAttribute("aria-hidden","false");document.getElementById("editorBackdrop").hidden=false;switchTab(tab);document.body.style.overflow="hidden"}
 function closeEditor(){document.getElementById("editor").classList.remove("open");document.getElementById("editor").setAttribute("aria-hidden","true");document.getElementById("editorBackdrop").hidden=true;document.body.style.overflow=""}
@@ -112,6 +126,7 @@ function makeParticles(){if(matchMedia("(prefers-reduced-motion: reduce)").match
 document.getElementById("editBtn").onclick=()=>openEditor();document.getElementById("footerEdit").onclick=()=>openEditor();document.getElementById("closeEditor").onclick=closeEditor;document.getElementById("editorBackdrop").onclick=closeEditor;
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>switchTab(t.dataset.tab));
 document.getElementById("saveBtn").onclick=()=>{collectEditor();save();render();closeEditor()};
+document.addEventListener("pointerdown",startBackgroundMusic,{once:false,passive:true});
 document.getElementById("openHeart").onclick=()=>{document.getElementById("memories").scrollIntoView({behavior:"smooth"});for(let i=0;i<10;i++)setTimeout(()=>{const h=document.createElement("span");h.className="particle";h.textContent="♥";h.style.left=(45+Math.random()*10)+"%";h.style.animationDuration="3s";document.getElementById("particles").appendChild(h);setTimeout(()=>h.remove(),3000)},i*80)};
 document.getElementById("revealBtn").onclick=()=>{document.getElementById("secret").hidden=false;document.getElementById("revealBtn").textContent="♥ A little piece of my heart";};
 document.getElementById("audio").onplay=()=>document.getElementById("record").classList.add("playing");document.getElementById("audio").onpause=()=>document.getElementById("record").classList.remove("playing");
@@ -121,6 +136,10 @@ document.getElementById("addEvent").onclick=()=>{data.events.push({date:"",title
 document.getElementById("photoUpload").onchange=e=>[...e.target.files].forEach(f=>compressImage(f,img=>{data.memories.push({date:"",title:"A favorite moment",caption:"",image:img});render()}));
 document.getElementById("heroUpload").onchange=e=>{const f=e.target.files[0];if(f)compressImage(f,img=>{data.heroImage=img;render()})};
 document.getElementById("audioUpload").onchange=e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=()=>{data.audio=r.result;render();toast("Song added ♥")};r.readAsDataURL(f)}};
+document.getElementById("backgroundAudioUpload").onchange=e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=()=>{data.backgroundAudio=r.result;data.backgroundMusicEnabled=true;render();toast("Background music added ♥");startBackgroundMusic()};r.readAsDataURL(f)}};
+document.getElementById("removeBackgroundAudio").onclick=()=>{data.backgroundAudio="";render();toast("Background music removed")};
+document.getElementById("backgroundMusicToggle").onchange=e=>{data.backgroundMusicEnabled=e.target.checked;if(e.target.checked)startBackgroundMusic();else document.getElementById("backgroundAudio").pause()};
+document.getElementById("backgroundMusicVolume").oninput=e=>{data.backgroundMusicVolume=Number(e.target.value);document.getElementById("backgroundAudio").volume=data.backgroundMusicVolume};
 document.getElementById("exportBtn").onclick=()=>{collectEditor();const blob=new Blob([JSON.stringify(data)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="my-valentines-page.json";a.click();URL.revokeObjectURL(a.href);toast("Backup exported")};
 document.getElementById("importBtn").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x || typeof x!=="object" || !Array.isArray(x.memories))throw Error();if(!confirm("Import this Valentine's page? Your current saved content will be replaced."))return;data=normalize(x);save();render();toast("Imported successfully ♥")}catch{toast("That backup file could not be imported.")}};r.readAsText(f)};
 document.getElementById("resetBtn").onclick=()=>{if(confirm("Are you sure you want to reset your Valentine's page? This will remove your saved content.")){data=structuredClone(defaultData);save();render();toast("Page reset")}};
