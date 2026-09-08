@@ -70,8 +70,29 @@ function switchTab(tab){document.querySelectorAll(".tab").forEach(x=>x.classList
 function collectEditor(){document.querySelectorAll("[data-key]").forEach(el=>data[el.dataset.key]=el.value);document.querySelectorAll("[data-style]").forEach(el=>data.settings[el.dataset.style]=el.value)}
 function pickImage(cb){const input=document.createElement("input");input.type="file";input.accept="image/*";input.onchange=()=>{const f=input.files[0];if(f)compressImage(f,cb)};input.click()}
 function compressImage(file,cb){if(!file.type.startsWith("image/"))return toast("Please choose an image file.");const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const max=1600,s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.82))};im.src=r.result};r.readAsDataURL(file)}
-function openLight(i){if(!data.memories[i]?.image)return;lightIndex=i;updateLight();document.getElementById("lightbox").hidden=false}
-function updateLight(){const m=data.memories[lightIndex];document.getElementById("lightImg").src=m.image;document.getElementById("lightImg").alt=m.title||"Memory";document.getElementById("lightCaption").textContent=[m.date,m.title,m.caption].filter(Boolean).join(" · ")}
+function closeLight(){
+  const box=document.getElementById("lightbox");
+  box.hidden=true;
+  document.body.classList.remove("lightbox-open");
+  document.body.style.overflow="";
+}
+function openLight(i){
+  const m=data.memories[i];
+  if(!m?.image)return;
+  lightIndex=i;
+  updateLight();
+  const box=document.getElementById("lightbox");
+  box.hidden=false;
+  document.body.classList.add("lightbox-open");
+  document.body.style.overflow="hidden";
+}
+function updateLight(){
+  const m=data.memories[lightIndex];
+  if(!m?.image){closeLight();return}
+  document.getElementById("lightImg").src=m.image;
+  document.getElementById("lightImg").alt=m.title||"Memory";
+  document.getElementById("lightCaption").textContent=[m.date,m.title,m.caption].filter(Boolean).join(" · ");
+}
 function makeParticles(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;const p=document.getElementById("particles");setInterval(()=>{if(p.children.length>18)return;const x=document.createElement("span");x.className="particle";x.textContent=Math.random()>.5?"♥":"✦";x.style.left=Math.random()*100+"%";x.style.fontSize=10+Math.random()*15+"px";x.style.animationDuration=8+Math.random()*10+"s";p.appendChild(x);setTimeout(()=>x.remove(),19000)},900)}
 document.getElementById("editBtn").onclick=()=>openEditor();document.getElementById("footerEdit").onclick=()=>openEditor();document.getElementById("closeEditor").onclick=closeEditor;document.getElementById("editorBackdrop").onclick=closeEditor;
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>switchTab(t.dataset.tab));
@@ -91,7 +112,46 @@ document.getElementById("resetBtn").onclick=()=>{if(confirm("Are you sure you wa
 document.getElementById("lovePreview").onclick=()=>{collectEditor();save();closeEditor();document.body.classList.add("love-mode");window.scrollTo({top:0,behavior:"smooth"});};
 document.getElementById("menuBtn").onclick=()=>{const n=document.getElementById("nav");n.classList.toggle("open");document.getElementById("menuBtn").setAttribute("aria-expanded",n.classList.contains("open"))};
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>document.getElementById("nav").classList.remove("open"));
-document.getElementById("lightClose").onclick=()=>document.getElementById("lightbox").hidden=true;document.getElementById("lightPrev").onclick=()=>{lightIndex=(lightIndex-1+data.memories.length)%data.memories.length;while(!data.memories[lightIndex]?.image)lightIndex=(lightIndex-1+data.memories.length)%data.memories.length;updateLight()};document.getElementById("lightNext").onclick=()=>{lightIndex=(lightIndex+1)%data.memories.length;while(!data.memories[lightIndex]?.image)lightIndex=(lightIndex+1)%data.memories.length;updateLight()};
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){document.getElementById("lightbox").hidden=true;closeEditor()}if(!document.getElementById("lightbox").hidden){if(e.key==="ArrowLeft")document.getElementById("lightPrev").click();if(e.key==="ArrowRight")document.getElementById("lightNext").click()}});
+document.getElementById("lightClose").onclick=e=>{e.preventDefault();e.stopPropagation();closeLight()};
+document.getElementById("lightPrev").onclick=e=>{
+  e.preventDefault();e.stopPropagation();
+  const count=data.memories.length;
+  if(!count)return closeLight();
+  for(let n=0;n<count;n++){lightIndex=(lightIndex-1+count)%count;if(data.memories[lightIndex]?.image){updateLight();return}}
+  closeLight();
+};
+document.getElementById("lightNext").onclick=e=>{
+  e.preventDefault();e.stopPropagation();
+  const count=data.memories.length;
+  if(!count)return closeLight();
+  for(let n=0;n<count;n++){lightIndex=(lightIndex+1)%count;if(data.memories[lightIndex]?.image){updateLight();return}}
+  closeLight();
+};
+document.getElementById("lightbox").onclick=e=>{if(e.target===e.currentTarget)closeLight()};
+document.addEventListener("keydown",e=>{
+  const box=document.getElementById("lightbox");
+  if(e.key==="Escape"){
+    if(!box.hidden)closeLight();
+    closeEditor();
+    return;
+  }
+  if(!box.hidden){
+    if(e.key==="ArrowLeft"){e.preventDefault();document.getElementById("lightPrev").click()}
+    if(e.key==="ArrowRight"){e.preventDefault();document.getElementById("lightNext").click()}
+  }
+});
 document.getElementById("letterText").addEventListener("input",e=>{data.letter=e.currentTarget.innerHTML});document.getElementById("signature").addEventListener("input",e=>{data.signature=e.currentTarget.innerHTML});
-setInterval(updateCounter,1000);render();observeReveals();makeParticles();
+setInterval(updateCounter,1000);
+const initialLightbox=document.getElementById("lightbox");
+initialLightbox.hidden=true;
+document.body.classList.remove("lightbox-open");
+document.body.style.overflow="";
+render();
+observeReveals();
+makeParticles();
+window.addEventListener("pageshow",()=>{
+  const box=document.getElementById("lightbox");
+  if(box)box.hidden=true;
+  document.body.classList.remove("lightbox-open");
+  document.body.style.overflow="";
+});
