@@ -15,7 +15,71 @@ let data=load(); let lightIndex=0; let draft;
 
 function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return x?normalize(x):structuredClone(defaultData)}catch{return structuredClone(defaultData)}}
 function normalize(x){return {...structuredClone(defaultData),...x,settings:{...defaultData.settings,...(x.settings||{})},memories:Array.isArray(x.memories)?x.memories:[],reasons:Array.isArray(x.reasons)?x.reasons:defaultData.reasons,events:Array.isArray(x.events)?x.events:defaultData.events}}
-function save(){localStorage.setItem(KEY,JSON.stringify(data));toast("Saved with love ♥")}
+function save(){
+  try{
+    const safe=structuredClone(data);
+    // Audio blobs are kept in IndexedDB, not LocalStorage, so larger songs can be saved.
+    safe.audio="";
+    safe.backgroundAudio="";
+    localStorage.setItem(KEY,JSON.stringify(safe));
+    toast("Saved with love ♥");
+    return true;
+  }catch(err){
+    console.error("Save failed",err);
+    toast("Could not save. Try a smaller image or song.");
+    return false;
+  }
+}
+const MEDIA_DB="valentine-love-letter-media-v1";
+function mediaDB(){
+  return new Promise((resolve,reject)=>{
+    const r=indexedDB.open(MEDIA_DB,1);
+    r.onupgradeneeded=()=>r.result.createObjectStore("media");
+    r.onsuccess=()=>resolve(r.result);
+    r.onerror=()=>reject(r.error);
+  });
+}
+async function mediaPut(key,value){
+  try{
+    const db=await mediaDB();
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction("media","readwrite");
+      tx.objectStore("media").put(value,key);
+      tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+    });
+    db.close();
+    return true;
+  }catch(e){console.error("Media save failed",e);toast("The song could not be stored in this browser.");return false}
+}
+async function mediaGet(key){
+  try{
+    const db=await mediaDB();
+    const value=await new Promise((resolve,reject)=>{
+      const tx=db.transaction("media","readonly");
+      const r=tx.objectStore("media").get(key);
+      r.onsuccess=()=>resolve(r.result||"");
+      r.onerror=()=>reject(r.error);
+    });
+    db.close();return value;
+  }catch(e){return ""}
+}
+async function mediaDelete(key){
+  try{
+    const db=await mediaDB();
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction("media","readwrite");
+      tx.objectStore("media").delete(key);
+      tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+    });
+    db.close();
+  }catch(e){}
+}
+async function hydrateMedia(){
+  const bg=await mediaGet("backgroundAudio");
+  if(bg){data.backgroundAudio=bg;renderBackgroundMusic();renderEditor();startBackgroundMusic()}
+  const song=await mediaGet("songAudio");
+  if(song){data.audio=song;renderAudio()}
+}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function toast(t){const x=document.getElementById("toast");x.textContent=t;x.classList.add("show");clearTimeout(window._toast);window._toast=setTimeout(()=>x.classList.remove("show"),2200)}
 function applyStyle(){const s=data.settings;document.documentElement.style.setProperty("--primary",s.primary);document.documentElement.style.setProperty("--background",s.background);document.documentElement.style.setProperty("--bg",s.background);document.documentElement.style.setProperty("--text",s.text);document.documentElement.style.setProperty("--heading",s.heading);document.documentElement.style.setProperty("--body",s.body);document.getElementById("particles").style.display=s.mood==="plain"?"none":"block"}
@@ -135,14 +199,52 @@ document.getElementById("addReason").onclick=()=>{data.reasons.push("Something I
 document.getElementById("addEvent").onclick=()=>{data.events.push({date:"",title:"A New Chapter",description:"Tell the story of this moment.",image:""});render()};
 document.getElementById("photoUpload").onchange=e=>[...e.target.files].forEach(f=>compressImage(f,img=>{data.memories.push({date:"",title:"A favorite moment",caption:"",image:img});render()}));
 document.getElementById("heroUpload").onchange=e=>{const f=e.target.files[0];if(f)compressImage(f,img=>{data.heroImage=img;render()})};
-document.getElementById("audioUpload").onchange=e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=()=>{data.audio=r.result;render();toast("Song added ♥")};r.readAsDataURL(f)}};
-document.getElementById("backgroundAudioUpload").onchange=e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=()=>{data.backgroundAudio=r.result;data.backgroundMusicEnabled=true;render();toast("Background music added ♥");startBackgroundMusic()};r.readAsDataURL(f)}};
-document.getElementById("removeBackgroundAudio").onclick=()=>{data.backgroundAudio="";render();toast("Background music removed")};
+document.getElementById("audioUpload").onchange=e=>{
+  const f=e.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=async()=>{
+    if(await mediaPut("songAudio",r.result)){
+      data.audio=r.result;
+      render();
+      toast("Song added ♥");
+    }
+  };
+  r.readAsDataURL(f);
+};
+document.getElementById("backgroundAudioUpload").onchange=e=>{
+  const f=e.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=async()=>{
+    if(await mediaPut("backgroundAudio",r.result)){
+      data.backgroundAudio=r.result;
+      data.backgroundMusicEnabled=true;
+      render();
+      toast("Background music added ♥");
+      startBackgroundMusic();
+    }
+  };
+  r.readAsDataURL(f);
+};
+document.getElementById("removeBackgroundAudio").onclick=async()=>{
+  await mediaDelete("backgroundAudio");
+  data.backgroundAudio="";
+  render();
+  toast("Background music removed");
+};
 document.getElementById("backgroundMusicToggle").onchange=e=>{data.backgroundMusicEnabled=e.target.checked;if(e.target.checked)startBackgroundMusic();else document.getElementById("backgroundAudio").pause()};
 document.getElementById("backgroundMusicVolume").oninput=e=>{data.backgroundMusicVolume=Number(e.target.value);document.getElementById("backgroundAudio").volume=data.backgroundMusicVolume};
 document.getElementById("exportBtn").onclick=()=>{collectEditor();const blob=new Blob([JSON.stringify(data)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="my-valentines-page.json";a.click();URL.revokeObjectURL(a.href);toast("Backup exported")};
 document.getElementById("importBtn").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x || typeof x!=="object" || !Array.isArray(x.memories))throw Error();if(!confirm("Import this Valentine's page? Your current saved content will be replaced."))return;data=normalize(x);save();render();toast("Imported successfully ♥")}catch{toast("That backup file could not be imported.")}};r.readAsText(f)};
-document.getElementById("resetBtn").onclick=()=>{if(confirm("Are you sure you want to reset your Valentine's page? This will remove your saved content.")){data=structuredClone(defaultData);save();render();toast("Page reset")}};
+document.getElementById("resetBtn").onclick=async()=>{
+  if(confirm("Are you sure you want to reset your Valentine's page? This will remove your saved content.")){
+    await mediaDelete("backgroundAudio");
+    await mediaDelete("songAudio");
+    data=structuredClone(defaultData);
+    save();render();toast("Page reset");
+  }
+};
 document.getElementById("lovePreview").onclick=()=>{collectEditor();save();closeEditor();document.body.classList.add("love-mode");window.scrollTo({top:0,behavior:"smooth"});};
 document.getElementById("menuBtn").onclick=()=>{const n=document.getElementById("nav");n.classList.toggle("open");document.getElementById("menuBtn").setAttribute("aria-expanded",n.classList.contains("open"))};
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>document.getElementById("nav").classList.remove("open"));
@@ -182,7 +284,7 @@ document.body.classList.remove("lightbox-open");
 document.body.style.overflow="";
 render();
 observeReveals();
-makeParticles();
+makeParticles();\nhydrateMedia();
 window.addEventListener("pageshow",()=>{
   const box=document.getElementById("lightbox");
   if(box)box.hidden=true;
