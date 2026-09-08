@@ -15,7 +15,7 @@ window.SITE_DATA = {
   "finalMessage": "If I could choose one person to make memories with over and over again, I would choose you every single time.",
   "heroImage": "",
   "audio": "",
-  "backgroundAudio": "",
+  "backgroundAudio": "assets/music.mp3",
   "backgroundMusicEnabled": true,
   "backgroundMusicVolume": 0.18,
   "settings": {
