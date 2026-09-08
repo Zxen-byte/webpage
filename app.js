@@ -1,84 +1,22 @@
-const KEY="valentine-love-letter-v1";
-const defaultData={
+const defaultData=window.SITE_DATA||{
 heroTitle:"Happy Valentine's Day ♥",heroTo:"To My Favorite Person",heroSubtitle:"Every moment with you is a memory I never want to forget.",
 name:"[Your Name]",letter:`<p><em>My love,</em></p><p>I don't always know how to put my feelings into words, but I want you to know how grateful I am to have you in my life. Somehow, ordinary days became my favorite days simply because you were there.</p><p>Thank you for every laugh, every quiet moment, every memory, and every little way you make life feel warmer.</p><p>I choose you, again and again.</p>`,signature:"Forever yours,<br><b>[Your Name] ♥</b>",
-secret:"You are one of the best things that ever happened to me. No matter where life takes us, I hope we keep choosing each other.",
-songText:"This song always reminds me of you.",songLink:"",metDate:"2024-06-14T19:00",anniversary:"",
-finalMessage:"If I could choose one person to make memories with over and over again, I would choose you every single time.",
-heroImage:"",audio:"",backgroundAudio:"",backgroundMusicEnabled:true,backgroundMusicVolume:0.18,settings:{primary:"#8b1e3f",background:"#fff9f5",text:"#34272b",heading:"Georgia,serif",body:"'Trebuchet MS',sans-serif",mood:"petals"},
+secret:"You are one of the best things that ever happened to me. No matter where life takes us, I hope we keep choosing each other.",songText:"This song always reminds me of you.",songLink:"",metDate:"2024-06-14T19:00",anniversary:"",
+finalMessage:"If I could choose one person to make memories with over and over again, I would choose you every single time.",heroImage:"",audio:"",backgroundAudio:"",backgroundMusicEnabled:true,backgroundMusicVolume:0.18,
+settings:{primary:"#8b1e3f",background:"#fff9f5",text:"#34272b",heading:"Georgia,serif",body:"'Trebuchet MS',sans-serif",mood:"petals"},
 memories:[],reasons:["Your smile","Your laugh","The way you care about people","The way you make ordinary days special"],
-events:[
- {date:"2023",title:"The Beginning",description:"Somehow, two people met and started a story neither of us expected.",image:""},
- {date:"2024",title:"Our Favorite Memories",description:"Every day with you became another reason to smile.",image:""}
-]};
-let data=load(); let lightIndex=0; let draft;
-
-function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return x?normalize(x):structuredClone(defaultData)}catch{return structuredClone(defaultData)}}
+events:[{date:"2023",title:"The Beginning",description:"Somehow, two people met and started a story neither of us expected.",image:""},{date:"2024",title:"Our Favorite Memories",description:"Every day with you became another reason to smile.",image:""}]
+};
+let data=normalize(window.SITE_DATA||defaultData); let lightIndex=0; let draft;
 function normalize(x){return {...structuredClone(defaultData),...x,settings:{...defaultData.settings,...(x.settings||{})},memories:Array.isArray(x.memories)?x.memories:[],reasons:Array.isArray(x.reasons)?x.reasons:defaultData.reasons,events:Array.isArray(x.events)?x.events:defaultData.events}}
-function save(){
-  try{
-    const safe=structuredClone(data);
-    // Audio blobs are kept in IndexedDB, not LocalStorage, so larger songs can be saved.
-    safe.audio="";
-    safe.backgroundAudio="";
-    localStorage.setItem(KEY,JSON.stringify(safe));
-    toast("Saved with love ♥");
-    return true;
-  }catch(err){
-    console.error("Save failed",err);
-    toast("Could not save. Try a smaller image or song.");
-    return false;
-  }
-}
-const MEDIA_DB="valentine-love-letter-media-v1";
-function mediaDB(){
-  return new Promise((resolve,reject)=>{
-    const r=indexedDB.open(MEDIA_DB,1);
-    r.onupgradeneeded=()=>r.result.createObjectStore("media");
-    r.onsuccess=()=>resolve(r.result);
-    r.onerror=()=>reject(r.error);
-  });
-}
-async function mediaPut(key,value){
-  try{
-    const db=await mediaDB();
-    await new Promise((resolve,reject)=>{
-      const tx=db.transaction("media","readwrite");
-      tx.objectStore("media").put(value,key);
-      tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
-    });
-    db.close();
-    return true;
-  }catch(e){console.error("Media save failed",e);toast("The song could not be stored in this browser.");return false}
-}
-async function mediaGet(key){
-  try{
-    const db=await mediaDB();
-    const value=await new Promise((resolve,reject)=>{
-      const tx=db.transaction("media","readonly");
-      const r=tx.objectStore("media").get(key);
-      r.onsuccess=()=>resolve(r.result||"");
-      r.onerror=()=>reject(r.error);
-    });
-    db.close();return value;
-  }catch(e){return ""}
-}
-async function mediaDelete(key){
-  try{
-    const db=await mediaDB();
-    await new Promise((resolve,reject)=>{
-      const tx=db.transaction("media","readwrite");
-      tx.objectStore("media").delete(key);
-      tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
-    });
-    db.close();
-  }catch(e){}
-}
-async function hydrateMedia(){
-  const bg=await mediaGet("backgroundAudio");
-  if(bg){data.backgroundAudio=bg;renderBackgroundMusic();renderEditor();startBackgroundMusic()}
-  const song=await mediaGet("songAudio");
-  if(song){data.audio=song;renderAudio()}
+function downloadGitHubConfig(){
+  collectEditor();
+  const clean=structuredClone(data);
+  const js='// Edit this file in GitHub to publish your Valentine website.\n// Keep image/audio files in the assets/ folder and use paths such as "assets/hero.jpg".\nwindow.SITE_DATA = '+JSON.stringify(clean,null,2)+';\n';
+  const blob=new Blob([js],{type:'text/javascript'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='site-data.js';a.click();URL.revokeObjectURL(a.href);
+  toast('site-data.js downloaded ♥ Upload it to GitHub');
+  return true;
 }
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function toast(t){const x=document.getElementById("toast");x.textContent=t;x.classList.add("show");clearTimeout(window._toast);window._toast=setTimeout(()=>x.classList.remove("show"),2200)}
@@ -124,16 +62,15 @@ function renderGallery(){
 function renderTimeline(){document.getElementById("timeline").innerHTML=data.events.map(e=>`<article class="event reveal"><time>${esc(e.date)}</time><h3>${esc(e.title)}</h3><p>${esc(e.description)}</p>${e.image?`<img src="${e.image}" alt="">`:""}</article>`).join("");observeReveals()}
 function renderReasons(){document.getElementById("reasons").innerHTML=data.reasons.map(r=>`<div class="reason reveal"><span>${esc(r)} ♥</span></div>`).join("");observeReveals()}
 function renderEditorLists(){
- document.getElementById("memoryEditorList").innerHTML=data.memories.map((m,i)=>`<div class="edit-item"><strong>Memory ${i+1}</strong><input data-m="${i}" data-field="date" placeholder="Date" value="${esc(m.date)}"><input data-m="${i}" data-field="title" placeholder="Title" value="${esc(m.title)}"><textarea data-m="${i}" data-field="caption" placeholder="Caption">${esc(m.caption)}</textarea><div class="edit-row"><button class="secondary-btn replace-memory" data-i="${i}">Replace photo</button><button class="mini-danger delete-memory" data-i="${i}">Delete</button></div></div>`).join("");
+ document.getElementById("memoryEditorList").innerHTML=data.memories.map((m,i)=>`<div class="edit-item"><strong>Memory ${i+1}</strong><input data-m="${i}" data-field="date" placeholder="Date" value="${esc(m.date)}"><input data-m="${i}" data-field="title" placeholder="Title" value="${esc(m.title)}"><textarea data-m="${i}" data-field="caption" placeholder="Caption">${esc(m.caption)}</textarea><input data-m="${i}" data-field="image" placeholder="assets/memory-1.jpg" value="${esc(m.image||"")}"><button class="mini-danger delete-memory" data-i="${i}">Delete</button></div>`).join("");
  document.getElementById("reasonEditorList").innerHTML=data.reasons.map((r,i)=>`<div class="edit-item"><input data-r="${i}" value="${esc(r)}"><button class="mini-danger delete-reason" data-i="${i}">Delete</button></div>`).join("");
- document.getElementById("eventEditorList").innerHTML=data.events.map((e,i)=>`<div class="edit-item"><strong>Story ${i+1}</strong><input data-e="${i}" data-field="date" placeholder="Date" value="${esc(e.date)}"><input data-e="${i}" data-field="title" placeholder="Title" value="${esc(e.title)}"><textarea data-e="${i}" data-field="description" placeholder="Description">${esc(e.description)}</textarea><button class="mini-danger delete-event" data-i="${i}">Delete</button></div>`).join("");
+ document.getElementById("eventEditorList").innerHTML=data.events.map((e,i)=>`<div class="edit-item"><strong>Story ${i+1}</strong><input data-e="${i}" data-field="date" placeholder="Date" value="${esc(e.date)}"><input data-e="${i}" data-field="title" placeholder="Title" value="${esc(e.title)}"><textarea data-e="${i}" data-field="description" placeholder="Description">${esc(e.description)}</textarea><input data-e="${i}" data-field="image" placeholder="assets/story.jpg" value="${esc(e.image||"")}"><button class="mini-danger delete-event" data-i="${i}">Delete</button></div>`).join("");
  document.querySelectorAll("[data-m]").forEach(x=>x.oninput=()=>{data.memories[x.dataset.m][x.dataset.field]=x.value;renderGallery()});
  document.querySelectorAll("[data-r]").forEach(x=>x.oninput=()=>{data.reasons[x.dataset.r]=x.value;renderReasons()});
  document.querySelectorAll("[data-e]").forEach(x=>x.oninput=()=>{data.events[x.dataset.e][x.dataset.field]=x.value;renderTimeline()});
  document.querySelectorAll(".delete-memory").forEach(b=>b.onclick=()=>{data.memories.splice(+b.dataset.i,1);render()});
  document.querySelectorAll(".delete-reason").forEach(b=>b.onclick=()=>{data.reasons.splice(+b.dataset.i,1);render()});
  document.querySelectorAll(".delete-event").forEach(b=>b.onclick=()=>{data.events.splice(+b.dataset.i,1);render()});
- document.querySelectorAll(".replace-memory").forEach(b=>b.onclick=()=>pickImage(img=>{data.memories[+b.dataset.i].image=img;render()}));
 }
 function updateCounter(){
  const start=new Date(data.metDate);if(isNaN(start)){return}
@@ -189,63 +126,26 @@ function updateLight(){
 function makeParticles(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;const p=document.getElementById("particles");setInterval(()=>{if(p.children.length>18)return;const x=document.createElement("span");x.className="particle";x.textContent=Math.random()>.5?"♥":"✦";x.style.left=Math.random()*100+"%";x.style.fontSize=10+Math.random()*15+"px";x.style.animationDuration=8+Math.random()*10+"s";p.appendChild(x);setTimeout(()=>x.remove(),19000)},900)}
 document.getElementById("editBtn").onclick=()=>openEditor();document.getElementById("footerEdit").onclick=()=>openEditor();document.getElementById("closeEditor").onclick=closeEditor;document.getElementById("editorBackdrop").onclick=closeEditor;
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>switchTab(t.dataset.tab));
-document.getElementById("saveBtn").onclick=()=>{collectEditor();save();render();closeEditor()};
-document.addEventListener("pointerdown",startBackgroundMusic,{once:false,passive:true});
+document.getElementById("saveBtn").onclick=()=>{downloadGitHubConfig();render()};
+let musicReady=false;
+function tryStartMusic(){
+  if(!musicReady)return;
+  startBackgroundMusic();
+}
+document.addEventListener("pointerdown",tryStartMusic,{passive:true});
+document.addEventListener("touchstart",tryStartMusic,{passive:true});
+document.addEventListener("keydown",tryStartMusic,{passive:true});
 document.getElementById("openHeart").onclick=()=>{document.getElementById("memories").scrollIntoView({behavior:"smooth"});for(let i=0;i<10;i++)setTimeout(()=>{const h=document.createElement("span");h.className="particle";h.textContent="♥";h.style.left=(45+Math.random()*10)+"%";h.style.animationDuration="3s";document.getElementById("particles").appendChild(h);setTimeout(()=>h.remove(),3000)},i*80)};
 document.getElementById("revealBtn").onclick=()=>{document.getElementById("secret").hidden=false;document.getElementById("revealBtn").textContent="♥ A little piece of my heart";};
 document.getElementById("audio").onplay=()=>document.getElementById("record").classList.add("playing");document.getElementById("audio").onpause=()=>document.getElementById("record").classList.remove("playing");
 document.getElementById("addMemory").onclick=()=>{data.memories.push({date:"",title:"",caption:"",image:""});render()};
 document.getElementById("addReason").onclick=()=>{data.reasons.push("Something I love about you");render()};
 document.getElementById("addEvent").onclick=()=>{data.events.push({date:"",title:"A New Chapter",description:"Tell the story of this moment.",image:""});render()};
-document.getElementById("photoUpload").onchange=e=>[...e.target.files].forEach(f=>compressImage(f,img=>{data.memories.push({date:"",title:"A favorite moment",caption:"",image:img});render()}));
-document.getElementById("heroUpload").onchange=e=>{const f=e.target.files[0];if(f)compressImage(f,img=>{data.heroImage=img;render()})};
-document.getElementById("audioUpload").onchange=e=>{
-  const f=e.target.files[0];
-  if(!f)return;
-  const r=new FileReader();
-  r.onload=async()=>{
-    if(await mediaPut("songAudio",r.result)){
-      data.audio=r.result;
-      render();
-      toast("Song added ♥");
-    }
-  };
-  r.readAsDataURL(f);
-};
-document.getElementById("backgroundAudioUpload").onchange=e=>{
-  const f=e.target.files[0];
-  if(!f)return;
-  const r=new FileReader();
-  r.onload=async()=>{
-    if(await mediaPut("backgroundAudio",r.result)){
-      data.backgroundAudio=r.result;
-      data.backgroundMusicEnabled=true;
-      render();
-      toast("Background music added ♥");
-      startBackgroundMusic();
-    }
-  };
-  r.readAsDataURL(f);
-};
-document.getElementById("removeBackgroundAudio").onclick=async()=>{
-  await mediaDelete("backgroundAudio");
-  data.backgroundAudio="";
-  render();
-  toast("Background music removed");
-};
 document.getElementById("backgroundMusicToggle").onchange=e=>{data.backgroundMusicEnabled=e.target.checked;if(e.target.checked)startBackgroundMusic();else document.getElementById("backgroundAudio").pause()};
 document.getElementById("backgroundMusicVolume").oninput=e=>{data.backgroundMusicVolume=Number(e.target.value);document.getElementById("backgroundAudio").volume=data.backgroundMusicVolume};
-document.getElementById("exportBtn").onclick=()=>{collectEditor();const blob=new Blob([JSON.stringify(data)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="my-valentines-page.json";a.click();URL.revokeObjectURL(a.href);toast("Backup exported")};
-document.getElementById("importBtn").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x || typeof x!=="object" || !Array.isArray(x.memories))throw Error();if(!confirm("Import this Valentine's page? Your current saved content will be replaced."))return;data=normalize(x);save();render();toast("Imported successfully ♥")}catch{toast("That backup file could not be imported.")}};r.readAsText(f)};
-document.getElementById("resetBtn").onclick=async()=>{
-  if(confirm("Are you sure you want to reset your Valentine's page? This will remove your saved content.")){
-    await mediaDelete("backgroundAudio");
-    await mediaDelete("songAudio");
-    data=structuredClone(defaultData);
-    save();render();toast("Page reset");
-  }
-};
-document.getElementById("lovePreview").onclick=()=>{collectEditor();save();closeEditor();document.body.classList.add("love-mode");window.scrollTo({top:0,behavior:"smooth"});};
+document.getElementById("exportBtn").onclick=()=>downloadGitHubConfig();
+document.getElementById("resetBtn").onclick=()=>{if(confirm("Reset the editor preview to the GitHub version?")){data=normalize(window.SITE_DATA||defaultData);render();toast("Preview reset")}};
+document.getElementById("lovePreview").onclick=()=>{collectEditor();render();closeEditor();document.body.classList.add("love-mode");window.scrollTo({top:0,behavior:"smooth"});};
 document.getElementById("menuBtn").onclick=()=>{const n=document.getElementById("nav");n.classList.toggle("open");document.getElementById("menuBtn").setAttribute("aria-expanded",n.classList.contains("open"))};
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>document.getElementById("nav").classList.remove("open"));
 document.getElementById("lightClose").onclick=e=>{e.preventDefault();e.stopPropagation();closeLight()};
@@ -285,7 +185,7 @@ document.body.style.overflow="";
 render();
 observeReveals();
 makeParticles();
-hydrateMedia();
+musicReady=!!data.backgroundAudio;
 window.addEventListener("pageshow",()=>{
   const box=document.getElementById("lightbox");
   if(box)box.hidden=true;

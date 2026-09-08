@@ -1,33 +1,36 @@
-# Valentine's Love Letter Website
+# Valentine's Love Letter — GitHub-only edition
 
-A standalone, deploy-ready romantic website built with plain HTML, CSS and JavaScript.
+A standalone romantic website for GitHub Pages. No Firebase, database, login, build step, or backend.
 
-## Deploy
-Upload the contents of this folder to any static host:
-- Netlify
-- Vercel
-- GitHub Pages
-- Cloudflare Pages
-- Any ordinary web server
+## Publish / update the website
 
-No build step or package manager is required.
+1. Open `site-data.js` in your GitHub repository.
+2. Edit the text, dates, reasons, colors, and media paths.
+3. Put photos/audio inside `assets/`.
+4. Commit your changes to GitHub.
+5. GitHub Pages serves the updated version to everyone.
 
-## How it works
-Open `index.html`. Click **Edit Website** to customize the page. Content is stored in the browser with LocalStorage. Use **Export Valentine's Page** to make a JSON backup.
+### Using the built-in editor
 
-## Important storage note
-This version intentionally runs entirely client-side. Uploaded photos and local audio are stored in browser storage/data URLs, so extremely large collections can exceed browser storage limits. The image uploader automatically resizes/compresses images.
+The **Edit Website** panel is now a preview editor. It does not pretend to write to GitHub. Click **Save for GitHub** to download a new `site-data.js`, then upload/replace that file in GitHub and commit it.
 
-## Love Mode
-Use **Preview Love Mode** from the editor to hide the editing UI and experience the page as the recipient.
+For media, upload the actual files to `assets/` in GitHub and use paths such as `assets/hero.jpg` or `assets/background.mp3`.
+
+## Important limitation
+
+A GitHub Pages website cannot securely commit files back into your GitHub repository from the browser without giving the public site a GitHub credential. This version deliberately avoids that security risk.
 
 ## Files
 - `index.html` — page structure
-- `styles.css` — responsive visual design and animations
-- `app.js` — editor, persistence, gallery, lightbox, counter, import/export, audio, accessibility behavior
+- `styles.css` — design and animations
+- `app.js` — editor, gallery, lightbox, counter, audio, accessibility behavior
+- `site-data.js` — **the main publishing file**
+- `assets/` — published photos and audio
 
 ## Music
-A local audio file can be selected in Edit Website. External links are offered as a fallback instead of pretending unsupported music services can be embedded.
+
+Use local files in `assets/` for public music. Browsers may block autoplay until the visitor interacts with the page.
 
 ## Privacy
-There is no backend and no analytics in this project. Data entered into the page stays in the browser unless the user exports or otherwise shares it.
+
+There is no backend or analytics in this project. Published content is served publicly by GitHub Pages.

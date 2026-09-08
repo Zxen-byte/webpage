@@ -126,13 +126,15 @@
   </div>
 
   <div id="tab-memoriesTab" class="tab-panel">
-    <div class="panel-actions"><button class="secondary-btn" id="addMemory">+ Add Memory</button><label class="upload-btn">Upload Photos<input id="photoUpload" type="file" accept="image/*" multiple hidden></label></div>
+    <div class="panel-actions"><button class="secondary-btn" id="addMemory">+ Add Memory</button></div>
     <div id="memoryEditorList"></div>
     <hr><div class="panel-actions"><button class="secondary-btn" id="addReason">+ Add Reason</button><button class="secondary-btn" id="addEvent">+ Add Story Event</button></div>
     <div id="reasonEditorList"></div><div id="eventEditorList"></div>
-    <hr><label>Hero / final photo <span class="upload-btn">Choose image<input id="heroUpload" type="file" accept="image/*" hidden></span></label>
-    <label>Our Song file <span class="upload-btn">Choose audio<input id="audioUpload" type="file" accept="audio/*" hidden></span></label>
-    <hr><div class="music-settings"><strong>Background music</strong><p class="muted">Plays softly after your first tap/click. Browsers block sound from starting before user interaction.</p><label class="check-row"><input id="backgroundMusicToggle" type="checkbox"> Enable background music</label><label>Volume<input id="backgroundMusicVolume" type="range" min="0" max="0.5" step="0.01" value="0.18"></label><div class="panel-actions"><label class="upload-btn">Choose background song<input id="backgroundAudioUpload" type="file" accept="audio/*" hidden></label><button class="danger-btn" id="removeBackgroundAudio" type="button">Remove</button></div></div>
+    <hr><p class="muted">Media is published through GitHub too. Put your files in <b>assets/</b>, then enter their relative paths below.</p>
+    <label>Hero / final photo<input data-key="heroImage" placeholder="assets/hero.jpg"></label>
+    <label>Our Song file<input data-key="audio" placeholder="assets/song.mp3"></label>
+    <label>Background song<input data-key="backgroundAudio" placeholder="assets/background.mp3"></label>
+    <div class="music-settings"><strong>Background music</strong><p class="muted">Browsers require a tap/click before music can start automatically.</p><label class="check-row"><input id="backgroundMusicToggle" type="checkbox"> Enable background music</label><label>Volume<input id="backgroundMusicVolume" type="range" min="0" max="0.5" step="0.01" value="0.18"></label></div>
   </div>
 
   <div id="tab-style" class="tab-panel">
@@ -143,13 +145,12 @@
   </div>
 
   <div id="tab-data" class="tab-panel">
-    <p class="muted">Your page saves locally in this browser. Export a backup before moving it to another device.</p>
-    <button class="secondary-btn full" id="exportBtn">Export Valentine's Page</button>
-    <label class="upload-btn full">Import Valentine's Page<input id="importBtn" type="file" accept="application/json" hidden></label>
-    <button class="danger-btn full" id="resetBtn">Reset Website</button>
+    <p class="muted"><b>GitHub-only publishing:</b> your browser can preview edits, but it cannot safely write to GitHub. Use the button below to download an updated <code>site-data.js</code>, then upload/replace that file in your GitHub repository and commit it.</p>
+    <button class="secondary-btn full" id="exportBtn">Download site-data.js</button>
+    <button class="danger-btn full" id="resetBtn">Reset Preview</button>
     <button class="primary-btn full" id="lovePreview">Preview Love Mode ♥</button>
   </div>
-  <div class="editor-foot"><button class="primary-btn full" id="saveBtn">Save Changes</button></div>
+  <div class="editor-foot"><button class="primary-btn full" id="saveBtn">Save for GitHub ♥</button></div>
 </aside>
 <div id="editorBackdrop" class="backdrop" hidden></div>
 
@@ -159,6 +160,7 @@
  <figure><img id="lightImg" alt="" decoding="async"><figcaption id="lightCaption"></figcaption></figure><button class="light-nav next" id="lightNext" aria-label="Next">›</button>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="site-data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
