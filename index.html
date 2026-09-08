@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#7b1734">
+<meta name="description" content="A private digital love letter.">
+<title>Our Love Letter</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="particles" aria-hidden="true"></div>
+
+<header class="site-header">
+  <a class="brand" href="#home" aria-label="Back to home">♡ <span>Our Love Letter</span></a>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav">☰</button>
+  <nav id="nav" class="nav" aria-label="Main navigation">
+    <a href="#home">Home</a><a href="#story">Our Story</a><a href="#memories">Memories</a>
+    <a href="#message">My Message</a><a href="#love">Things I Love</a><a href="#song">Our Song</a><a href="#forever">Forever</a>
+  </nav>
+  <button class="edit-btn" id="editBtn">Edit Website ✏️</button>
+</header>
+
+<main>
+<section id="home" class="hero section">
+  <div class="hero-copy reveal">
+    <p class="eyebrow">A little something from my heart</p>
+    <h1 id="heroTitle">Happy Valentine's Day <span>♥</span></h1>
+    <h2 id="heroTo">To My Favorite Person</h2>
+    <p id="heroSubtitle">Every moment with you is a memory I never want to forget.</p>
+    <button class="primary-btn" id="openHeart">Open My Heart ♥</button>
+  </div>
+  <div class="hero-photo frame">
+    <img id="heroImage" alt="Our favorite memory" hidden>
+    <div id="heroPlaceholder" class="photo-placeholder"><span>♡</span><b>A place for your favorite photo</b><small>Make this moment yours</small></div>
+  </div>
+</section>
+
+<section id="counter" class="counter section narrow reveal">
+  <p class="eyebrow">And every second since</p>
+  <h2>Time Since We Met ♥</h2>
+  <div class="counter-grid">
+    <div><strong id="years">0</strong><span>Years</span></div><div><strong id="months">0</strong><span>Months</span></div>
+    <div><strong id="days">0</strong><span>Days</span></div><div><strong id="hours">0</strong><span>Hours</span></div>
+    <div><strong id="minutes">0</strong><span>Minutes</span></div><div><strong id="seconds">0</strong><span>Seconds</span></div>
+  </div>
+  <p id="anniversaryText" class="muted"></p>
+</section>
+
+<section id="memories" class="section">
+  <div class="section-heading reveal"><p class="eyebrow">The moments I keep close</p><h2>Our Memories</h2><p>Little pieces of our story, saved forever.</p></div>
+  <div id="gallery" class="gallery"></div>
+</section>
+
+<section id="message" class="section letter-section">
+  <div class="section-heading reveal"><p class="eyebrow">Words I want you to keep</p><h2>My Message For You ♥</h2></div>
+  <article class="letter reveal">
+    <div id="letterText" class="letter-text" tabindex="0">
+      <p><em>My love,</em></p>
+      <p>I don't always know how to put my feelings into words, but I want you to know how grateful I am to have you in my life. Somehow, ordinary days became my favorite days simply because you were there.</p>
+      <p>Thank you for every laugh, every quiet moment, every memory, and every little way you make life feel warmer.</p>
+      <p>I choose you, again and again.</p>
+    </div>
+    <div id="signature" class="signature">Forever yours,<br><b>[Your Name] ♥</b></div>
+  </article>
+</section>
+
+<section id="story" class="section">
+  <div class="section-heading reveal"><p class="eyebrow">How we became us</p><h2>Our Story</h2></div>
+  <div id="timeline" class="timeline"></div>
+</section>
+
+<section id="love" class="section blush">
+  <div class="section-heading reveal"><p class="eyebrow">A few of a million reasons</p><h2>Things I Love About You ♥</h2></div>
+  <div id="reasons" class="reason-grid"></div>
+</section>
+
+<section id="song" class="section song-section">
+  <div class="song-card reveal">
+    <div class="record" id="record">♥</div>
+    <div><p class="eyebrow">Press play when you miss me</p><h2>Our Song 🎵</h2><p id="songText">This song always reminds me of you.</p>
+    <audio id="audio" controls preload="metadata"></audio>
+    <a id="songLink" class="text-link" href="#" target="_blank" rel="noopener" hidden>Open Our Song 🎵</a></div>
+  </div>
+</section>
+
+<section id="surprise" class="section surprise">
+  <div class="surprise-card reveal">
+    <p class="eyebrow">One more thing...</p>
+    <h2>There's Something I Want To Tell You ♥</h2>
+    <button class="primary-btn" id="revealBtn">Open My Secret</button>
+    <div id="secret" class="secret" hidden><p id="secretText">You are one of the best things that ever happened to me. No matter where life takes us, I hope we keep choosing each other.</p></div>
+  </div>
+</section>
+
+<section id="forever" class="section ending">
+  <div class="ending-inner reveal">
+    <p class="eyebrow">Until every tomorrow</p><h2>Thank You For Being You ♥</h2>
+    <p id="finalMessage">If I could choose one person to make memories with over and over again, I would choose you every single time.</p>
+    <div id="finalPhoto" class="final-photo"></div>
+    <div class="forever">Forever & Always ♥</div>
+    <small id="finalSignature">[Your Name]</small>
+  </div>
+</section>
+</main>
+
+<footer><span>Made with love.</span><button id="footerEdit">Edit Website</button></footer>
+
+<!-- Editor -->
+<aside id="editor" class="editor" aria-label="Website editor" aria-hidden="true">
+  <div class="editor-head"><div><span class="eyebrow">Private editor</span><h2>Make it yours</h2></div><button id="closeEditor" class="icon-btn" aria-label="Close editor">×</button></div>
+  <div class="tabs"><button class="tab active" data-tab="content">Content</button><button class="tab" data-tab="memoriesTab">Memories</button><button class="tab" data-tab="style">Style</button><button class="tab" data-tab="data">Save</button></div>
+
+  <div id="tab-content" class="tab-panel active">
+    <label>Hero title<input data-key="heroTitle"></label><label>Hero greeting<input data-key="heroTo"></label><label>Hero subtitle<textarea data-key="heroSubtitle"></textarea></label>
+    <label>Your name<input data-key="name"></label>
+    <label>Love letter <small>HTML is supported for simple formatting.</small><textarea class="big" data-key="letter"></textarea></label>
+    <label>Signature<textarea data-key="signature"></textarea></label>
+    <label>Secret message<textarea data-key="secret"></textarea></label>
+    <label>Our Song text<input data-key="songText"></label>
+    <label>Song link <input data-key="songLink" type="url" placeholder="https://..."></label>
+    <label>We met <input data-key="metDate" type="datetime-local"></label>
+    <label>Anniversary <input data-key="anniversary" type="date"></label>
+    <label>Final message<textarea data-key="finalMessage"></textarea></label>
+  </div>
+
+  <div id="tab-memoriesTab" class="tab-panel">
+    <div class="panel-actions"><button class="secondary-btn" id="addMemory">+ Add Memory</button><label class="upload-btn">Upload Photos<input id="photoUpload" type="file" accept="image/*" multiple hidden></label></div>
+    <div id="memoryEditorList"></div>
+    <hr><div class="panel-actions"><button class="secondary-btn" id="addReason">+ Add Reason</button><button class="secondary-btn" id="addEvent">+ Add Story Event</button></div>
+    <div id="reasonEditorList"></div><div id="eventEditorList"></div>
+    <hr><label>Hero / final photo <span class="upload-btn">Choose image<input id="heroUpload" type="file" accept="image/*" hidden></span></label>
+    <label>Local song <span class="upload-btn">Choose audio<input id="audioUpload" type="file" accept="audio/*" hidden></span></label>
+  </div>
+
+  <div id="tab-style" class="tab-panel">
+    <label>Primary <input data-style="primary" type="color"></label><label>Background <input data-style="background" type="color"></label><label>Text <input data-style="text" type="color"></label>
+    <label>Heading font<select data-style="heading"><option value="Georgia,serif">Elegant Serif</option><option value="'Trebuchet MS',sans-serif">Soft Modern</option><option value="cursive">Handwritten</option></select></label>
+    <label>Body font<select data-style="body"><option value="'Trebuchet MS',sans-serif">Modern Sans</option><option value="Arial,sans-serif">Classic Sans</option><option value="Georgia,serif">Serif</option></select></label>
+    <label>Background mood<select data-style="mood"><option value="petals">Soft petals</option><option value="plain">Clean</option><option value="hearts">Floating hearts</option></select></label>
+  </div>
+
+  <div id="tab-data" class="tab-panel">
+    <p class="muted">Your page saves locally in this browser. Export a backup before moving it to another device.</p>
+    <button class="secondary-btn full" id="exportBtn">Export Valentine's Page</button>
+    <label class="upload-btn full">Import Valentine's Page<input id="importBtn" type="file" accept="application/json" hidden></label>
+    <button class="danger-btn full" id="resetBtn">Reset Website</button>
+    <button class="primary-btn full" id="lovePreview">Preview Love Mode ♥</button>
+  </div>
+  <div class="editor-foot"><button class="primary-btn full" id="saveBtn">Save Changes</button></div>
+</aside>
+<div id="editorBackdrop" class="backdrop" hidden></div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="modal" hidden role="dialog" aria-modal="true" aria-label="Memory photo">
+ <button class="modal-close" id="lightClose">×</button><button class="light-nav prev" id="lightPrev" aria-label="Previous">‹</button>
+ <figure><img id="lightImg" alt=""><figcaption id="lightCaption"></figcaption></figure><button class="light-nav next" id="lightNext" aria-label="Next">›</button>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>
