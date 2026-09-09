@@ -223,6 +223,9 @@ function showPage(index, updateHash=true){
   document.querySelectorAll(".page-section").forEach((section,i)=>{
     section.classList.toggle("active-page", i===currentPage);
   });
+  // Keep the floating header visually connected to darker romantic pages.
+  const header=document.querySelector(".site-header");
+  if(header) header.classList.toggle("page-dark", ["song","surprise","forever"].includes(pageIds[currentPage]));
   const prev=document.getElementById("pagePrev");
   const next=document.getElementById("pageNext");
   const num=document.getElementById("pageNumber");
