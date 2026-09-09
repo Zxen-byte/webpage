@@ -34,3 +34,10 @@ Use local files in `assets/` for public music. Browsers may block autoplay until
 ## Privacy
 
 There is no backend or analytics in this project. Published content is served publicly by GitHub Pages.
+
+
+## Memory game images
+The editor's Memories tab now has a **Memory Game Images** section with Memory 1 through Memory 9.
+Each image is used twice in the 18-card game. You can type paths such as `assets/memory1.jpg`
+or use the Upload button for a browser preview. When publishing to GitHub, put the selected files
+inside `assets/` and keep the corresponding paths in `site-data.js`.

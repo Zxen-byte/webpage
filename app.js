@@ -1,14 +1,16 @@
+document.documentElement.classList.add("js-ready");
 const defaultData=window.SITE_DATA||{
 heroTitle:"Happy Valentine's Day ♥",heroTo:"To My Favorite Person",heroSubtitle:"Every moment with you is a memory I never want to forget.",
 name:"[Your Name]",letter:`<p><em>My love,</em></p><p>I don't always know how to put my feelings into words, but I want you to know how grateful I am to have you in my life. Somehow, ordinary days became my favorite days simply because you were there.</p><p>Thank you for every laugh, every quiet moment, every memory, and every little way you make life feel warmer.</p><p>I choose you, again and again.</p>`,signature:"Forever yours,<br><b>[Your Name] ♥</b>",
 secret:"You are one of the best things that ever happened to me. No matter where life takes us, I hope we keep choosing each other.",songText:"This song always reminds me of you.",songLink:"",metDate:"2024-06-14T19:00",anniversary:"2026-07-28",accessPassword:"love",
 finalMessage:"If I could choose one person to make memories with over and over again, I would choose you every single time.",heroImage:"",counterImage:"",messageImage:"",storyImage:"",loveImage:"",songImage:"",surpriseImage:"",audio:"",backgroundAudio:"",backgroundMusicEnabled:true,backgroundMusicVolume:0.18,
-memoryGameImages:Array.from({length:9},(_,i)=>`assets/game-photos/${i+1}.avif`),settings:{primary:"#8b1e3f",background:"#fff9f5",text:"#34272b",heading:"Georgia,serif",body:"'Trebuchet MS',sans-serif",mood:"petals"},
+settings:{primary:"#8b1e3f",background:"#fff9f5",text:"#34272b",heading:"Georgia,serif",body:"'Trebuchet MS',sans-serif",mood:"petals"},
+memoryImages:Array.from({length:9},(_,i)=>`assets/game-photos/${i+1}.avif`),
 memories:[],reasons:["Your smile","Your laugh","The way you care about people","The way you make ordinary days special"],
 events:[{date:"2023",title:"The Beginning",description:"Somehow, two people met and started a story neither of us expected.",image:""},{date:"2024",title:"Our Favorite Memories",description:"Every day with you became another reason to smile.",image:""}]
 };
 let data=normalize(window.SITE_DATA||defaultData); let lightIndex=0; let draft;
-function normalize(x){return {...structuredClone(defaultData),...x,settings:{...defaultData.settings,...(x.settings||{})},memories:Array.isArray(x.memories)?x.memories:[],reasons:Array.isArray(x.reasons)?x.reasons:defaultData.reasons,memoryGameImages:Array.isArray(x.memoryGameImages)&&x.memoryGameImages.length===9?x.memoryGameImages:defaultData.memoryGameImages,events:Array.isArray(x.events)?x.events:defaultData.events}}
+function normalize(x){return {...structuredClone(defaultData),...x,settings:{...defaultData.settings,...(x.settings||{})},memoryImages:Array.isArray(x.memoryImages)&&x.memoryImages.length?Array.from({length:9},(_,i)=>String(x.memoryImages[i]||defaultData.memoryImages[i]||"")):structuredClone(defaultData.memoryImages),memories:Array.isArray(x.memories)?x.memories:[],reasons:Array.isArray(x.reasons)?x.reasons:defaultData.reasons,events:Array.isArray(x.events)?x.events:defaultData.events}}
 function downloadGitHubConfig(){
   collectEditor();
   const clean=structuredClone(data);
@@ -78,37 +80,58 @@ function renderGallery(){
 function renderTimeline(){document.getElementById("timeline").innerHTML=data.events.map(e=>`<article class="event reveal"><time>${esc(e.date)}</time><h3>${esc(e.title)}</h3><p>${esc(e.description)}</p>${e.image?`<img src="${e.image}" alt="">`:""}</article>`).join("");observeReveals()}
 function renderReasons(){document.getElementById("reasons").innerHTML=data.reasons.map(r=>`<div class="reason reveal"><span>${esc(r)} ♥</span></div>`).join("");observeReveals()}
 function renderEditorLists(){
-  const gameList=document.getElementById("memoryGameImageEditorList");
-  if(gameList){
-    gameList.innerHTML=data.memoryGameImages.map((src,i)=>`<div class="edit-item game-image-edit">
+  const memoryList=document.getElementById("memoryEditorList");
+  const imageList=document.getElementById("memoryGameImageEditorList");
+  if(memoryList){
+    memoryList.innerHTML=data.memories.map((m,i)=>`<div class="edit-item">
       <strong>Memory ${i+1}</strong>
-      <div class="game-image-row">
-        <div class="game-image-preview">${src?`<img src="${esc(src)}" alt="Memory ${i+1}">`:`<span>♥</span>`}</div>
-        <div class="game-image-fields">
-          <div class="photo-input"><input data-game-image="${i}" placeholder="assets/memory${i+1}.jpg" value="${esc(src||"")}"><button type="button" class="upload-btn game-image-upload" data-i="${i}">Upload</button></div>
-          <small class="field-help">Use a path like <b>assets/memory${i+1}.jpg</b>. This image appears on both matching cards.</small>
-        </div>
-      </div>
+      <input data-m="${i}" data-field="date" placeholder="Date" value="${esc(m.date||"")}">
+      <input data-m="${i}" data-field="title" placeholder="Title" value="${esc(m.title||"")}">
+      <textarea data-m="${i}" data-field="caption" placeholder="Caption">${esc(m.caption||"")}</textarea>
+      <input data-m="${i}" data-field="image" placeholder="assets/memory-photo.jpg" value="${esc(m.image||"")}">
+      <button class="mini-danger delete-memory" data-i="${i}" type="button">Delete</button>
     </div>`).join("");
-    gameList.querySelectorAll("[data-game-image]").forEach(x=>x.oninput=()=>{data.memoryGameImages[+x.dataset.gameImage]=x.value.trim();});
-    gameList.querySelectorAll(".game-image-upload").forEach(b=>b.onclick=()=>pickImage(dataUrl=>{
-      const i=+b.dataset.i;
-      data.memoryGameImages[i]=dataUrl;
-      renderEditorLists();
-      createMemoryGame(memoryFinished);
-      toast(`Memory ${i+1} image added ♥`);
-    }));
-    gameList.querySelectorAll(".game-image-preview img").forEach(img=>img.onerror=()=>{img.hidden=true;});
   }
- document.getElementById("memoryEditorList").innerHTML=data.memories.map((m,i)=>`<div class="edit-item"><strong>Memory ${i+1}</strong><input data-m="${i}" data-field="date" placeholder="Date" value="${esc(m.date)}"><input data-m="${i}" data-field="title" placeholder="Title" value="${esc(m.title)}"><textarea data-m="${i}" data-field="caption" placeholder="Caption">${esc(m.caption)}</textarea><input data-m="${i}" data-field="image" placeholder="assets/memory-1.jpg" value="${esc(m.image||"")}"><button class="mini-danger delete-memory" data-i="${i}">Delete</button></div>`).join("");
- document.getElementById("reasonEditorList").innerHTML=data.reasons.map((r,i)=>`<div class="edit-item"><input data-r="${i}" value="${esc(r)}"><button class="mini-danger delete-reason" data-i="${i}">Delete</button></div>`).join("");
- document.getElementById("eventEditorList").innerHTML=data.events.map((e,i)=>`<div class="edit-item"><strong>Story ${i+1}</strong><input data-e="${i}" data-field="date" placeholder="Date" value="${esc(e.date)}"><input data-e="${i}" data-field="title" placeholder="Title" value="${esc(e.title)}"><textarea data-e="${i}" data-field="description" placeholder="Description">${esc(e.description)}</textarea><input data-e="${i}" data-field="image" placeholder="assets/story.jpg" value="${esc(e.image||"")}"><button class="mini-danger delete-event" data-i="${i}">Delete</button></div>`).join("");
- document.querySelectorAll("[data-m]").forEach(x=>x.oninput=()=>{data.memories[x.dataset.m][x.dataset.field]=x.value;renderGallery()});
- document.querySelectorAll("[data-r]").forEach(x=>x.oninput=()=>{data.reasons[x.dataset.r]=x.value;renderReasons()});
- document.querySelectorAll("[data-e]").forEach(x=>x.oninput=()=>{data.events[x.dataset.e][x.dataset.field]=x.value;renderTimeline()});
- document.querySelectorAll(".delete-memory").forEach(b=>b.onclick=()=>{data.memories.splice(+b.dataset.i,1);render()});
- document.querySelectorAll(".delete-reason").forEach(b=>b.onclick=()=>{data.reasons.splice(+b.dataset.i,1);render()});
- document.querySelectorAll(".delete-event").forEach(b=>b.onclick=()=>{data.events.splice(+b.dataset.i,1);render()});
+  if(imageList){
+    imageList.innerHTML=Array.from({length:9},(_,i)=>{
+      const src=String(data.memoryImages?.[i]||"");
+      return `<div class="memory-image-editor edit-item">
+        <strong>Memory ${i+1}</strong>
+        <div class="photo-input">
+          <input data-game-image="${i}" value="${esc(src)}" placeholder="assets/memory${i+1}.jpg">
+          <button type="button" class="upload-btn" data-game-upload="${i}">Upload</button>
+        </div>
+        <div class="game-image-preview">${src?`<img src="${esc(src)}" alt="Memory ${i+1}" onerror="this.style.display='none'">`:`<span>♡ Add Memory ${i+1}</span>`}</div>
+        <small class="field-help">Use <b>assets/memory${i+1}.jpg</b>, or upload a photo here.</small>
+      </div>`;
+    }).join("");
+  }
+  const reasonList=document.getElementById("reasonEditorList");
+  const eventList=document.getElementById("eventEditorList");
+  if(reasonList)reasonList.innerHTML=data.reasons.map((r,i)=>`<div class="edit-item"><input data-r="${i}" value="${esc(r)}"><button class="mini-danger delete-reason" data-i="${i}" type="button">Delete</button></div>`).join("");
+  if(eventList)eventList.innerHTML=data.events.map((e,i)=>`<div class="edit-item"><strong>Story ${i+1}</strong><input data-e="${i}" data-field="date" placeholder="Date" value="${esc(e.date||"")}"><input data-e="${i}" data-field="title" placeholder="Title" value="${esc(e.title||"")}"><textarea data-e="${i}" data-field="description" placeholder="Description">${esc(e.description||"")}</textarea><input data-e="${i}" data-field="image" placeholder="assets/story.jpg" value="${esc(e.image||"")}"><button class="mini-danger delete-event" data-i="${i}" type="button">Delete</button></div>`).join("");
+
+  document.querySelectorAll("[data-m]").forEach(x=>x.oninput=()=>{data.memories[x.dataset.m][x.dataset.field]=x.value;renderGallery()});
+  document.querySelectorAll("[data-r]").forEach(x=>x.oninput=()=>{data.reasons[x.dataset.r]=x.value;renderReasons()});
+  document.querySelectorAll("[data-e]").forEach(x=>x.oninput=()=>{data.events[x.dataset.e][x.dataset.field]=x.value;renderTimeline()});
+  document.querySelectorAll("[data-game-image]").forEach(x=>x.oninput=()=>{
+    data.memoryImages[Number(x.dataset.gameImage)]=x.value.trim();
+    renderMemoryGame(false);
+    const preview=x.closest(".memory-image-editor")?.querySelector(".game-image-preview img");
+    if(preview){preview.src=x.value.trim();preview.style.display=x.value.trim()?"block":"none"}
+  });
+  document.querySelectorAll("[data-game-upload]").forEach(b=>b.onclick=()=>{
+    const i=Number(b.dataset.gameUpload);
+    pickImage(dataUrl=>{
+      data.memoryImages[i]=dataUrl;
+      renderMemoryGame(false);
+      renderEditorLists();
+      toast(`Memory ${i+1} image added ♥`);
+    });
+  });
+  document.querySelectorAll(".delete-memory").forEach(b=>b.onclick=()=>{data.memories.splice(+b.dataset.i,1);render()});
+  document.querySelectorAll(".delete-reason").forEach(b=>b.onclick=()=>{data.reasons.splice(+b.dataset.i,1);render()});
+  document.querySelectorAll(".delete-event").forEach(b=>b.onclick=()=>{data.events.splice(+b.dataset.i,1);render()});
 }
 function updateCounter(){
  const start=new Date(data.metDate);if(isNaN(start)){return}
@@ -243,7 +266,6 @@ let currentPage = 0;
 let anniversaryVerified = false;
 let continueVerified = false;
 function showPage(index, updateHash=true){
-  if(index===5 && memoryFinished){const board=document.getElementById("memoryGame"); if(board){board.classList.add("game-won"); board.querySelectorAll(".memory-game-card").forEach(card=>card.classList.add("is-matched","celebrate"));} const complete=document.getElementById("gameComplete"); if(complete)complete.hidden=false;}
   currentPage = Math.max(0, Math.min(pageIds.length-1, index));
   document.querySelectorAll(".page-section").forEach((section,i)=>{
     section.classList.toggle("active-page", i===currentPage);
@@ -288,10 +310,11 @@ function checkAnniversary(){
 }
 
 /* ===== Memory matching game ===== */
-// 18 cards total: 9 unique memories, with each memory appearing twice.
-function getMemoryGameImages(){return Array.isArray(data.memoryGameImages)&&data.memoryGameImages.length===9?data.memoryGameImages:defaultData.memoryGameImages;}
-let memoryGameImages=getMemoryGameImages();
-function getMemoryPairs(){return memoryGameImages.flatMap((_,i)=>[i,i]);}
+function getMemoryGameImages(){
+  const defaults=Array.from({length:9},(_,i)=>`assets/game-photos/${i+1}.avif`);
+  if(!Array.isArray(data.memoryImages)) data.memoryImages=defaults;
+  return Array.from({length:9},(_,i)=>String(data.memoryImages[i]||defaults[i]||""));
+}
 let memoryDeck = [];
 let memoryFlipped = [];
 let memoryMatched = new Set();
@@ -310,36 +333,38 @@ function updateGameStatus(){
   const el=document.getElementById("gamePairsFound");
   if(el) el.textContent=String(Math.floor(memoryMatched.size/2));
 }
-function createMemoryGame(preserveFinished=false){
+function renderMemoryGame(reset=false){
   const board=document.getElementById("memoryGame");
   if(!board)return;
-  memoryGameImages=getMemoryGameImages();
-  memoryDeck=shuffleDeck(getMemoryPairs());
-  memoryFlipped=[];
-  memoryFinished=preserveFinished || sessionStorage.getItem("valentineMemoryFinished")==="1";
-  // A completed game stays completed when the user navigates back to this page.
-  memoryMatched=memoryFinished ? new Set(memoryDeck.map((_,i)=>i)) : new Set();
-  memoryBusy=false;
+  if(reset || !memoryDeck.length){
+    const memoryImages=getMemoryGameImages();
+    memoryDeck=shuffleDeck(Array.from({length:9},(_,i)=>[i,i]).flat());
+    memoryFlipped=[];
+    memoryMatched=new Set();
+    memoryBusy=false;
+    memoryFinished=false;
+  }
   const complete=document.getElementById("gameComplete");
   if(complete)complete.hidden=!memoryFinished;
   board.classList.toggle("game-won",memoryFinished);
-  // Compact 18-card board: 6 columns × 3 rows.
   board.innerHTML=memoryDeck.map((pairId,index)=>{
-    const src=memoryGameImages[pairId];
-    return `<button class="memory-game-card" type="button" data-game-index="${index}" aria-label="Hidden memory card ${index+1}">
+    const src=getMemoryGameImages()[pairId];
+    const matched=memoryMatched.has(index);
+    return `<button class="memory-game-card${matched?" is-flipped is-matched":""}" type="button" data-game-index="${index}" aria-label="Memory card ${index+1}">
       <span class="memory-card-inner">
         <span class="memory-card-face memory-card-back" aria-hidden="true"><span>♥</span></span>
-        <span class="memory-card-face memory-card-front">
-          <img src="${src}" alt="Memory ${pairId+1}" loading="eager">
-        </span>
+        <span class="memory-card-face memory-card-front"><img src="${esc(src)}" alt="Memory ${pairId+1}" loading="eager"></span>
       </span>
     </button>`;
   }).join("");
   board.querySelectorAll(".memory-game-card").forEach(card=>{
     card.addEventListener("click",()=>flipMemoryCard(Number(card.dataset.gameIndex)));
   });
+  if(memoryFinished) board.querySelectorAll(".memory-game-card").forEach(card=>card.classList.add("celebrate"));
   updateGameStatus();
-  if(memoryFinished){document.querySelectorAll(".memory-game-card").forEach(card=>card.classList.add("is-matched","celebrate"));}
+}
+function createMemoryGame(){
+  renderMemoryGame(true);
 }
 function setCardFlipped(index, flipped){
   const card=document.querySelector(`.memory-game-card[data-game-index="${index}"]`);
@@ -352,17 +377,20 @@ function setCardMatched(index){
 function finishMemoryGame(){
   if(memoryFinished)return;
   memoryFinished=true;
-  sessionStorage.setItem("valentineMemoryFinished","1");
   memoryBusy=true;
-  document.querySelectorAll(".memory-game-card").forEach(card=>card.classList.add("is-matched","celebrate"));
+  memoryFlipped=[];
+  memoryMatched=new Set(memoryDeck.map((_,i)=>i));
+  document.querySelectorAll(".memory-game-card").forEach(card=>card.classList.add("is-flipped","is-matched","celebrate"));
   const board=document.getElementById("memoryGame");
   const complete=document.getElementById("gameComplete");
   if(board)board.classList.add("game-won");
   if(complete)complete.hidden=false;
-  setTimeout(()=>goToPage(6),1900);
+  updateGameStatus();
+  // Move forward only once. Returning with Back keeps memoryFinished=true.
+  setTimeout(()=>goToPage(6),900);
 }
 function flipMemoryCard(index){
-  if(memoryBusy || memoryMatched.has(index) || memoryFlipped.includes(index))return;
+  if(memoryBusy || memoryFinished || memoryMatched.has(index) || memoryFlipped.includes(index))return;
   if(memoryFlipped.length>=2)return;
   memoryFlipped.push(index);
   setCardFlipped(index,true);
@@ -376,14 +404,14 @@ function flipMemoryCard(index){
     memoryFlipped=[];
     memoryBusy=false;
     updateGameStatus();
-    if(memoryMatched.size===memoryDeck.length) setTimeout(finishMemoryGame,450);
+    if(memoryMatched.size===memoryDeck.length) setTimeout(finishMemoryGame,350);
   }else{
     setTimeout(()=>{
       setCardFlipped(a,false);
       setCardFlipped(b,false);
       memoryFlipped=[];
       memoryBusy=false;
-    },850);
+    },700);
   }
 }
 createMemoryGame();

@@ -32,6 +32,7 @@ window.SITE_DATA = {
     "body": "'Trebuchet MS',sans-serif",
     "mood": "petals"
   },
+  "memoryImages": ["assets/game-photos/1.avif","assets/game-photos/2.avif","assets/game-photos/3.avif","assets/game-photos/4.avif","assets/game-photos/5.avif","assets/game-photos/6.avif","assets/game-photos/7.avif","assets/game-photos/8.avif","assets/game-photos/9.avif"],
   "memories": [],
   "reasons": [
     "Your smile",
