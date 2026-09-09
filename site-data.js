@@ -9,7 +9,7 @@ window.SITE_DATA = {
   "signature": "Forever yours,<br><b>[Your Name] ♥</b>",
   "secret": "You are one of the best things that ever happened to me. No matter where life takes us, I hope we keep choosing each other.",
   "songText": "This song always reminds me of you.",
-  "songLink": "",
+  "songLink": "https://youtu.be/AA75gCdr2TM?si=8Ozq93CWgkvAzYyo",
   "metDate": "2024-06-14T19:00",
   "anniversary": "",
   "finalMessage": "If I could choose one person to make memories with over and over again, I would choose you every single time.",
@@ -32,7 +32,17 @@ window.SITE_DATA = {
     "body": "'Trebuchet MS',sans-serif",
     "mood": "petals"
   },
-  "memoryImages": ["assets/game-photos/1.avif","assets/game-photos/2.avif","assets/game-photos/3.avif","assets/game-photos/4.avif","assets/game-photos/5.avif","assets/game-photos/6.avif","assets/game-photos/7.avif","assets/game-photos/8.avif","assets/game-photos/9.avif"],
+  "memoryImages": [
+    "assets/game-photos/1.avif",
+    "assets/game-photos/2.avif",
+    "assets/game-photos/3.avif",
+    "assets/game-photos/4.avif",
+    "assets/game-photos/5.avif",
+    "assets/game-photos/6.avif",
+    "assets/game-photos/7.avif",
+    "assets/game-photos/8.avif",
+    "assets/game-photos/9.avif"
+  ],
   "memories": [],
   "reasons": [
     "Your smile",
