@@ -21,7 +21,7 @@ window.SITE_DATA = {
   "songImage": "",
   "surpriseImage": "",
   "audio": "",
-  "backgroundAudio": "assets/music.mp3",
+  "backgroundAudio": "assets/back.mp3",
   "backgroundMusicEnabled": true,
   "backgroundMusicVolume": 0.18,
   "settings": {
