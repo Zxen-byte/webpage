@@ -388,3 +388,40 @@ main{padding-top:76px}
  .letter-section .letter{max-height:51vh}
  #story .timeline,#love .reason-grid{max-height:50vh}
 }
+
+/* ===== Final balance pass: centered content + side decorations ===== */
+.counter.page-section{max-width:none!important;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-left:clamp(22px,6vw,100px)!important;padding-right:clamp(22px,6vw,100px)!important}
+.counter.page-section > .eyebrow,.counter.page-section > h2,.counter.page-section > .counter-grid,.counter.page-section > .counter-center-note,.counter.page-section > #anniversaryText{width:min(1080px,100%);margin-left:auto;margin-right:auto}
+.counter.page-section > .eyebrow{margin-bottom:8px}
+.counter.page-section > h2{font-size:clamp(58px,7vw,92px);margin:0 0 10px;line-height:.92}
+.counter.page-section > .counter-grid{margin-top:24px}
+.counter-center-note{font-family:var(--heading);font-size:clamp(24px,2.4vw,34px);color:var(--primary2);margin-top:25px!important;margin-bottom:4px}
+.counter-center-note span{display:block;font-family:var(--body);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#9b7881;margin-top:8px}
+.counter .decor-counter{right:4.5vw!important;top:50%!important;transform:translateY(-50%) rotate(4deg)!important;display:flex!important;flex-direction:column;gap:12px;align-items:center;z-index:2}
+.counter .decor-counter .mini-photo{width:205px;height:255px;border-width:9px;box-shadow:0 25px 55px rgba(91,38,57,.16)}
+.counter .decor-counter .stamp{order:2;font-size:9px;padding:9px 14px;line-height:1.5;background:rgba(255,255,255,.5);backdrop-filter:blur(8px)}
+.counter .decor-counter:after{content:"a little piece of us ♥";order:3;font-family:'Parisienne',cursive;font-size:23px;color:var(--primary);white-space:nowrap;transform:rotate(-5deg)}
+.counter.page-section:after{right:19%;top:21%;font-size:150px}
+
+/* Keep the main content visually centered while decorative photos live at the edges. */
+#story .section-heading,#story .timeline,.blush .section-heading,.blush .reason-grid,.song-section .song-card,.surprise .surprise-card,.letter-section .section-heading,.letter-section .letter{margin-left:auto!important;margin-right:auto!important}
+#story .timeline{max-width:820px!important}
+.blush .reason-grid{max-width:980px!important}
+.song-section .song-card{max-width:900px!important}
+.surprise .surprise-card{max-width:820px!important}
+.letter-section .letter{max-width:860px!important}
+
+@media(max-width:1100px){
+ .counter .decor-counter{right:2vw!important;opacity:.9}
+ .counter .decor-counter .mini-photo{width:155px;height:195px}
+ .counter.page-section > h2{font-size:clamp(54px,6.5vw,76px)}
+}
+@media(max-width:800px){
+ .counter.page-section{justify-content:flex-start;padding-top:12vh!important}
+ .counter .decor-counter{position:relative!important;right:auto!important;top:auto!important;transform:none!important;order:5;margin-top:24px;flex-direction:row}
+ .counter .decor-counter .mini-photo{width:110px;height:140px;border-width:6px}
+ .counter .decor-counter:after{font-size:18px}
+ .counter.page-section:after{right:4%;top:13%;font-size:90px}
+ .counter.page-section > h2{font-size:clamp(48px,12vw,68px)}
+ .counter.page-section > .counter-grid{margin-top:18px}
+}
