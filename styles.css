@@ -544,3 +544,64 @@ main{padding-top:76px}
     padding-top:28px !important;
   }
 }
+
+
+/* =========================================================
+   SEAMLESS FULL-SCREEN HEADER
+   The header sits over the active page instead of taking
+   space away from it, so every page fills the viewport.
+   ========================================================= */
+.site-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:76px;
+  min-height:76px;
+  z-index:80;
+  background:rgba(255,250,249,.48);
+  border-bottom:1px solid rgba(169,75,104,.08);
+  box-shadow:0 6px 30px rgba(91,38,57,.035);
+  backdrop-filter:blur(18px) saturate(1.08);
+  -webkit-backdrop-filter:blur(18px) saturate(1.08);
+  transition:background .35s ease,border-color .35s ease,box-shadow .35s ease,color .35s ease;
+}
+.site-header .brand{color:var(--primary2)}
+.site-header .edit-btn{
+  background:rgba(255,255,255,.36);
+  color:var(--primary2);
+  border-color:rgba(169,75,104,.13);
+}
+.site-header.header-dark{
+  background:rgba(91,38,57,.42);
+  border-bottom-color:rgba(255,255,255,.10);
+  box-shadow:0 8px 32px rgba(30,3,14,.12);
+}
+.site-header.header-dark .brand{color:#fff}
+.site-header.header-dark .edit-btn{
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  border-color:rgba(255,255,255,.16);
+}
+main{
+  padding-top:0 !important;
+  height:100vh;
+}
+.page-section{
+  height:100vh !important;
+  min-height:100vh;
+  padding-top:clamp(105px,12vh,135px) !important;
+  padding-bottom:108px !important;
+}
+.page-section:before{inset:0;border-radius:0}
+.page-section.active-page{z-index:1}
+.page-controls{z-index:75}
+@media(max-width:700px){
+  .site-header{height:62px;min-height:62px}
+  main{padding-top:0 !important}
+  .page-section{
+    height:100vh !important;
+    min-height:100vh;
+    padding:86px 16px 88px !important;
+  }
+}

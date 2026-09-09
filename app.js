@@ -220,6 +220,8 @@ const pageIds = ["home","counter","memories","message","story","love","song","su
 let currentPage = 0;
 function showPage(index, updateHash=true){
   currentPage = Math.max(0, Math.min(pageIds.length-1, index));
+  const siteHeader=document.querySelector(".site-header");
+  if(siteHeader) siteHeader.classList.toggle("header-dark", ["song","forever"].includes(pageIds[currentPage]));
   document.querySelectorAll(".page-section").forEach((section,i)=>{
     section.classList.toggle("active-page", i===currentPage);
   });
