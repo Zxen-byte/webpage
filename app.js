@@ -216,9 +216,10 @@ window.addEventListener("pageshow",()=>{
 });
 
 /* Page-by-page navigation: one section visible at a time. */
-const pageIds = ["home","anniversary-gate","counter","memories","message","story","love","song","surprise","forever"];
+const pageIds = ["home","anniversary-gate","counter","continue-gate","memories","message","story","love","song","surprise","forever"];
 let currentPage = 0;
 let anniversaryVerified = false;
+let continueVerified = false;
 function showPage(index, updateHash=true){
   currentPage = Math.max(0, Math.min(pageIds.length-1, index));
   document.querySelectorAll(".page-section").forEach((section,i)=>{
@@ -230,11 +231,11 @@ function showPage(index, updateHash=true){
   const total=document.getElementById("pageTotal");
   const label=document.getElementById("nextLabel");
   if(prev) prev.disabled=currentPage===0;
-  if(next) next.disabled=currentPage===pageIds.length-1;
+  if(next) next.disabled=currentPage===pageIds.length-1 || currentPage===3;
   if(num) num.textContent=String(currentPage+1);
   if(total) total.textContent=String(pageIds.length);
   if(label){
-    label.textContent=currentPage===pageIds.length-1?"Done":(currentPage===0?"Next":(currentPage===1?"Continue":"Next"));
+    label.textContent=currentPage===pageIds.length-1?"Done":(currentPage===0?"Next":(currentPage===1?"Continue":(currentPage===3?"Choose Yes":"Next")));
   }
   if(updateHash) history.replaceState(null,"","#"+pageIds[currentPage]);
   const page=document.getElementById(pageIds[currentPage]);
@@ -266,18 +267,48 @@ document.getElementById("pagePrev").onclick=()=>goToPage(currentPage-1);
 document.getElementById("pageNext").onclick=()=>{
   if(currentPage===0)return goToPage(1);
   if(currentPage===1)return checkAnniversary();
+  if(currentPage===3)return;
   return goToPage(currentPage+1);
 };
 window.addEventListener("hashchange",()=>{
   const id=location.hash.replace("#",""); const i=pageIds.indexOf(id);
   if(i<0)return;
   if(i>1&&!anniversaryVerified){showPage(1,false);return;}
+  if(i>3&&!continueVerified){showPage(3,false);return;}
   showPage(i,false);
 });
 const anniversaryInput=document.getElementById("anniversaryInput");
 anniversaryInput?.addEventListener("input",e=>{e.target.value=formatAnniversaryInput(e.target.value);document.getElementById("anniversaryError").textContent=""});
 
 anniversaryInput?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();checkAnniversary()}});
+
+const continueYes=document.getElementById("continueYes");
+const continueNo=document.getElementById("continueNo");
+const continueArea=document.getElementById("continueChoiceArea");
+
+function moveNoButton(){
+  if(!continueNo||!continueArea)return;
+  const areaRect=continueArea.getBoundingClientRect();
+  const buttonRect=continueNo.getBoundingClientRect();
+  const pad=8;
+  const maxX=Math.max(pad,areaRect.width-buttonRect.width-pad);
+  const maxY=Math.max(pad,areaRect.height-buttonRect.height-pad);
+  const x=pad+Math.random()*Math.max(0,maxX-pad);
+  const y=pad+Math.random()*Math.max(0,maxY-pad);
+  continueNo.style.left=`${x}px`;
+  continueNo.style.top=`${y}px`;
+}
+["pointerenter","mouseover","touchstart","focus"].forEach(evt=>{
+  continueNo?.addEventListener(evt,e=>{
+    e.preventDefault();
+    moveNoButton();
+  },{passive:false});
+});
+continueNo?.addEventListener("click",e=>{e.preventDefault();moveNoButton()});
+continueYes?.addEventListener("click",()=>{
+  continueVerified=true;
+  goToPage(4);
+});
 document.addEventListener("keydown",e=>{
   if(document.getElementById("editor")?.classList.contains("open")) return;
   if(!document.getElementById("lightbox")?.hidden) return;
@@ -285,4 +316,10 @@ document.addEventListener("keydown",e=>{
   if(e.key==="ArrowLeft" || e.key==="PageUp"){e.preventDefault();goToPage(currentPage-1)}
 });
 const startId=location.hash.replace("#","");
-if(pageIds.includes(startId) && startId!=="home"){showPage(startId==="anniversary-gate"?1:0,false);}else showPage(0,false);
+if(pageIds.includes(startId) && startId!=="home"){
+  const startIndex=pageIds.indexOf(startId);
+  if(startIndex>3 && !anniversaryVerified) showPage(1,false);
+  else if(startIndex>3 && !continueVerified) showPage(3,false);
+  else if(startIndex>1 && !anniversaryVerified) showPage(1,false);
+  else showPage(startIndex,false);
+}else showPage(0,false);

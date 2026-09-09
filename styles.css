@@ -561,3 +561,75 @@ main{padding-top:76px}
 .anniversary-card{width:min(620px,100%)!important;text-align:center;padding:clamp(32px,5vw,58px);border:1px solid rgba(169,75,104,.14);border-radius:32px;background:rgba(255,255,255,.60);box-shadow:0 28px 80px rgba(91,38,57,.12);backdrop-filter:blur(18px)}
 .gate-heart{font-family:var(--heading);font-size:54px;color:var(--primary);line-height:1;margin-bottom:8px}.anniversary-card h2{font-family:var(--heading);font-size:clamp(40px,6vw,64px);line-height:.98;color:var(--primary2);margin:7px 0 14px}.anniversary-card>p:not(.eyebrow):not(.gate-error){color:var(--muted);margin:0 auto 22px}.anniversary-card .date-gate-input{max-width:300px;text-align:center;font-size:22px;letter-spacing:.12em;margin:auto;display:block}.anniversary-card small{display:block;color:var(--muted);margin-top:9px}.shake{animation:gateShake .42s ease}@keyframes gateShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
 @media(max-width:700px){.home-password{margin-left:auto;margin-right:auto;text-align:left}.password-row{flex-direction:column}.password-toggle{height:44px}.anniversary-card{padding:32px 20px}.anniversary-card h2{font-size:42px}}
+
+
+/* ===== Continue question / playful runaway No button ===== */
+.continue-gate{
+  background:
+    radial-gradient(circle at 18% 22%,rgba(240,185,198,.24),transparent 32%),
+    radial-gradient(circle at 82% 78%,rgba(166,92,119,.12),transparent 34%);
+}
+.continue-card{
+  width:min(680px,100%)!important;
+  text-align:center;
+  padding:clamp(34px,5vw,64px);
+  border:1px solid rgba(169,75,104,.14);
+  border-radius:32px;
+  background:rgba(255,255,255,.62);
+  box-shadow:0 28px 80px rgba(91,38,57,.12);
+  backdrop-filter:blur(18px);
+}
+.continue-card h2{
+  font-family:var(--heading);
+  font-size:clamp(44px,6vw,70px);
+  line-height:.98;
+  color:var(--primary2);
+  margin:8px 0 14px;
+}
+.continue-card>p:not(.eyebrow):not(.gate-error){
+  color:var(--muted);
+  margin:0 auto 20px;
+}
+.continue-choice-area{
+  position:relative;
+  width:min(430px,100%);
+  height:145px;
+  margin:4px auto 0;
+  border-radius:24px;
+}
+.yes-choice,.no-choice{
+  position:absolute;
+  top:52px;
+  min-width:108px;
+  height:50px;
+  padding:0 24px;
+  border:0;
+  border-radius:999px;
+  font-family:var(--body);
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+.yes-choice{
+  left:calc(50% - 118px);
+  background:var(--primary);
+  color:#fff;
+  box-shadow:0 12px 28px rgba(139,30,63,.22);
+}
+.yes-choice:hover{
+  transform:translateY(-2px) scale(1.04);
+  box-shadow:0 16px 34px rgba(139,30,63,.28);
+}
+.no-choice{
+  left:calc(50% + 10px);
+  background:#d9a1ad;
+  color:#fff;
+  box-shadow:0 10px 24px rgba(91,38,57,.12);
+}
+@media(max-width:700px){
+  .continue-card{padding:34px 20px}
+  .continue-choice-area{height:165px}
+  .yes-choice{left:calc(50% - 115px)}
+  .no-choice{left:calc(50% + 8px)}
+}
