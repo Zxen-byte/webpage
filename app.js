@@ -94,18 +94,4 @@ document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>document.getElement
 document.getElementById("lightClose").onclick=()=>document.getElementById("lightbox").hidden=true;document.getElementById("lightPrev").onclick=()=>{lightIndex=(lightIndex-1+data.memories.length)%data.memories.length;while(!data.memories[lightIndex]?.image)lightIndex=(lightIndex-1+data.memories.length)%data.memories.length;updateLight()};document.getElementById("lightNext").onclick=()=>{lightIndex=(lightIndex+1)%data.memories.length;while(!data.memories[lightIndex]?.image)lightIndex=(lightIndex+1)%data.memories.length;updateLight()};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){document.getElementById("lightbox").hidden=true;closeEditor()}if(!document.getElementById("lightbox").hidden){if(e.key==="ArrowLeft")document.getElementById("lightPrev").click();if(e.key==="ArrowRight")document.getElementById("lightNext").click()}});
 document.getElementById("letterText").addEventListener("input",e=>{data.letter=e.currentTarget.innerHTML});document.getElementById("signature").addEventListener("input",e=>{data.signature=e.currentTarget.innerHTML});
-function updateHeaderTheme(){
- const header=document.querySelector(".site-header");
- if(!header)return;
- const darkSections=document.querySelectorAll(".song-section,.ending");
- let dark=false;
- darkSections.forEach(sec=>{
-   const r=sec.getBoundingClientRect();
-   if(r.top<=90 && r.bottom>=90) dark=true;
- });
- header.classList.toggle("dark",dark);
- header.classList.toggle("light",!dark);
-}
-window.addEventListener("scroll",updateHeaderTheme,{passive:true});
-window.addEventListener("resize",updateHeaderTheme);
-setInterval(updateCounter,1000);render();observeReveals();makeParticles();updateHeaderTheme();
+setInterval(updateCounter,1000);render();observeReveals();makeParticles();
