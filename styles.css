@@ -425,3 +425,26 @@ main{padding-top:76px}
  .counter.page-section > h2{font-size:clamp(48px,12vw,68px)}
  .counter.page-section > .counter-grid{margin-top:18px}
 }
+
+/* ===== Natural page scrolling when a page has more content ===== */
+.page-section{
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-gutter:stable;
+}
+/* Let the page itself be the single scroll container instead of nested scroll boxes. */
+.memories.page-section .gallery,
+.section.page-section .gallery,
+.letter-section.page-section .letter,
+.story.page-section .timeline,
+.love.page-section .reason-grid,
+.ending.page-section .ending-inner{
+  max-height:none !important;
+  overflow:visible !important;
+}
+/* Keep enough room for the floating Back/Next controls at the bottom. */
+.page-section{padding-bottom:140px !important;}
+@media(max-width:700px){
+  .page-section{padding-bottom:105px !important;}
+}
