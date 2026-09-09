@@ -1,13 +1,13 @@
 const defaultData=window.SITE_DATA||{
 heroTitle:"Happy Valentine's Day ♥",heroTo:"To My Favorite Person",heroSubtitle:"Every moment with you is a memory I never want to forget.",
 name:"[Your Name]",letter:`<p><em>My love,</em></p><p>I don't always know how to put my feelings into words, but I want you to know how grateful I am to have you in my life. Somehow, ordinary days became my favorite days simply because you were there.</p><p>Thank you for every laugh, every quiet moment, every memory, and every little way you make life feel warmer.</p><p>I choose you, again and again.</p>`,signature:"Forever yours,<br><b>[Your Name] ♥</b>",
-secret:"You are one of the best things that ever happened to me. No matter where life takes us, I hope we keep choosing each other.",songText:"This song always reminds me of you.",songLink:"",metDate:"2024-06-14T19:00",anniversary:"",
-finalMessage:"If I could choose one person to make memories with over and over again, I would choose you every single time.",heroImage:"",counterImage:"",messageImage:"",storyImage:"",loveImage:"",songImage:"",surpriseImage:"",audio:"",backgroundAudio:"",backgroundMusicEnabled:true,backgroundMusicVolume:0.18,
+secret:"You are one of the best things that ever happened to me. No matter where life takes us, I hope we keep choosing each other.",songText:"This song always reminds me of you.",songLink:"",metDate:"2024-06-14T19:00",anniversary:"2026-07-28",
+finalMessage:"If I could choose one person to make memories with over and over again, I would choose you every single time.",accessPassword:"love",heroImage:"",counterImage:"",messageImage:"",storyImage:"",loveImage:"",songImage:"",surpriseImage:"",audio:"",backgroundAudio:"",backgroundMusicEnabled:true,backgroundMusicVolume:0.18,
 settings:{primary:"#8b1e3f",background:"#fff9f5",text:"#34272b",heading:"Georgia,serif",body:"'Trebuchet MS',sans-serif",mood:"petals"},
 memories:[],reasons:["Your smile","Your laugh","The way you care about people","The way you make ordinary days special"],
 events:[{date:"2023",title:"The Beginning",description:"Somehow, two people met and started a story neither of us expected.",image:""},{date:"2024",title:"Our Favorite Memories",description:"Every day with you became another reason to smile.",image:""}]
 };
-let data=normalize(window.SITE_DATA||defaultData); let lightIndex=0; let draft;
+let data=normalize(window.SITE_DATA||defaultData); let lightIndex=0; let draft; let accessUnlocked=false; let anniversaryVerified=false;
 function normalize(x){return {...structuredClone(defaultData),...x,settings:{...defaultData.settings,...(x.settings||{})},memories:Array.isArray(x.memories)?x.memories:[],reasons:Array.isArray(x.reasons)?x.reasons:defaultData.reasons,events:Array.isArray(x.events)?x.events:defaultData.events}}
 function downloadGitHubConfig(){
   collectEditor();
@@ -155,7 +155,6 @@ function tryStartMusic(){
 document.addEventListener("pointerdown",tryStartMusic,{passive:true});
 document.addEventListener("touchstart",tryStartMusic,{passive:true});
 document.addEventListener("keydown",tryStartMusic,{passive:true});
-document.getElementById("openHeart").onclick=()=>goToPage(1);
 document.getElementById("revealBtn").onclick=()=>{document.getElementById("secret").hidden=false;document.getElementById("revealBtn").textContent="♥ A little piece of my heart";};
 document.getElementById("audio").onplay=()=>document.getElementById("record").classList.add("playing");document.getElementById("audio").onpause=()=>document.getElementById("record").classList.remove("playing");
 document.getElementById("addMemory").onclick=()=>{data.memories.push({date:"",title:"",caption:"",image:""});render()};
@@ -216,43 +215,93 @@ window.addEventListener("pageshow",()=>{
 });
 
 /* Page-by-page navigation: one section visible at a time. */
-const pageIds = ["home","counter","memories","message","story","love","song","surprise","forever"];
+const pageIds = ["home","anniversary-gate","counter","memories","message","story","love","song","surprise","forever"];
 let currentPage = 0;
+const gatePages = new Set(["home","anniversary-gate"]);
 function showPage(index, updateHash=true){
   currentPage = Math.max(0, Math.min(pageIds.length-1, index));
+  const id=pageIds[currentPage];
   const siteHeader=document.querySelector(".site-header");
-  if(siteHeader) siteHeader.classList.toggle("header-dark", ["song","forever"].includes(pageIds[currentPage]));
-  document.querySelectorAll(".page-section").forEach((section,i)=>{
-    section.classList.toggle("active-page", i===currentPage);
-  });
-  const prev=document.getElementById("pagePrev");
-  const next=document.getElementById("pageNext");
-  const num=document.getElementById("pageNumber");
-  const total=document.getElementById("pageTotal");
-  const label=document.getElementById("nextLabel");
+  if(siteHeader) siteHeader.classList.toggle("header-dark", ["song","forever"].includes(id));
+  document.querySelectorAll(".page-section").forEach((section,i)=>section.classList.toggle("active-page", i===currentPage));
+  const prev=document.getElementById("pagePrev"), next=document.getElementById("pageNext");
+  const num=document.getElementById("pageNumber"), total=document.getElementById("pageTotal"), label=document.getElementById("nextLabel");
   if(prev) prev.disabled=currentPage===0;
-  if(next) next.disabled=currentPage===pageIds.length-1;
+  if(next) next.disabled=false;
   if(num) num.textContent=String(currentPage+1);
   if(total) total.textContent=String(pageIds.length);
-  if(label) label.textContent=currentPage===pageIds.length-1?"Done":(currentPage===0?"Start":"Next");
-  if(updateHash) history.replaceState(null,"","#"+pageIds[currentPage]);
-  const page=document.getElementById(pageIds[currentPage]);
-  if(page) page.scrollTop=0;
+  if(label){
+    if(id==="home") label.textContent="Unlock";
+    else if(id==="anniversary-gate") label.textContent="Continue";
+    else label.textContent=currentPage===pageIds.length-1?"Done":(currentPage===0?"Start":"Next");
+  }
+  if(updateHash) history.replaceState(null,"","#"+id);
+  const page=document.getElementById(id); if(page) page.scrollTop=0;
   window.dispatchEvent(new Event("pagechange"));
 }
 function goToPage(index){ showPage(index,true); }
+function formatAnniversaryInput(value){
+  const digits=String(value||"").replace(/\D/g,"").slice(0,6);
+  return digits.length>4 ? digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4) : digits.length>2 ? digits.slice(0,2)+"/"+digits.slice(2) : digits;
+}
+function anniversaryInputToISO(value){
+  const digits=String(value||"").replace(/\D/g,"");
+  if(digits.length!==6)return "";
+  const mm=digits.slice(0,2), dd=digits.slice(2,4), yy=digits.slice(4,6);
+  const year=2000+Number(yy);
+  const d=new Date(year,Number(mm)-1,Number(dd));
+  if(d.getFullYear()!==year||d.getMonth()!==Number(mm)-1||d.getDate()!==Number(dd))return "";
+  return `${year}-${mm}-${dd}`;
+}
+function checkPassword(){
+  const input=document.getElementById("passwordInput"), error=document.getElementById("passwordError");
+  if(String(input?.value||"")===String(data.accessPassword||"love")){
+    accessUnlocked=true; error.textContent=""; goToPage(1); return true;
+  }
+  if(error) error.textContent="That password isn't quite right. Try again. ♥";
+  input?.classList.add("shake"); setTimeout(()=>input?.classList.remove("shake"),450);
+  input?.focus(); return false;
+}
+function checkAnniversary(){
+  const input=document.getElementById("anniversaryInput"), error=document.getElementById("anniversaryError");
+  const entered=anniversaryInputToISO(input?.value);
+  const expected=String(data.anniversary||"").trim();
+  if(entered && expected && entered===expected){
+    anniversaryVerified=true; if(error) error.textContent=""; goToPage(2); return true;
+  }
+  if(error) error.textContent=expected ? "Not quite — think of our special date again. ♥" : "Set the anniversary date in Edit Website first. ♥";
+  input?.classList.add("shake"); setTimeout(()=>input?.classList.remove("shake"),450);
+  input?.focus(); return false;
+}
+function nextPage(){
+  const id=pageIds[currentPage];
+  if(id==="home") return checkPassword();
+  if(id==="anniversary-gate") return checkAnniversary();
+  goToPage(currentPage+1);
+}
 document.getElementById("pagePrev").onclick=()=>goToPage(currentPage-1);
-document.getElementById("pageNext").onclick=()=>goToPage(currentPage+1);
+document.getElementById("pageNext").onclick=nextPage;
+const passwordInput=document.getElementById("passwordInput");
+const anniversaryInput=document.getElementById("anniversaryInput");
+if(passwordInput) passwordInput.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();checkPassword()}});
+if(anniversaryInput) anniversaryInput.addEventListener("input",e=>{e.target.value=formatAnniversaryInput(e.target.value);document.getElementById("anniversaryError").textContent=""});
+document.getElementById("togglePassword")?.addEventListener("click",()=>{
+  const input=document.getElementById("passwordInput"), btn=document.getElementById("togglePassword");
+  if(!input)return; const showing=input.type==="text"; input.type=showing?"password":"text"; btn.textContent=showing?"Show":"Hide"; btn.setAttribute("aria-label",showing?"Show password":"Hide password");
+});
 window.addEventListener("hashchange",()=>{
-  const id=location.hash.replace("#","");
-  const i=pageIds.indexOf(id);
-  if(i>=0) showPage(i,false);
+  const id=location.hash.replace("#",""); const i=pageIds.indexOf(id); if(i<0)return;
+  if(i>0&&!accessUnlocked){showPage(0,false);return;}
+  if(i>1&&!anniversaryVerified){showPage(1,false);return;}
+  showPage(i,false);
 });
 document.addEventListener("keydown",e=>{
   if(document.getElementById("editor")?.classList.contains("open")) return;
   if(!document.getElementById("lightbox")?.hidden) return;
-  if(e.key==="ArrowRight" || e.key==="PageDown"){e.preventDefault();goToPage(currentPage+1)}
+  if(e.key==="ArrowRight" || e.key==="PageDown"){e.preventDefault();nextPage()}
   if(e.key==="ArrowLeft" || e.key==="PageUp"){e.preventDefault();goToPage(currentPage-1)}
 });
 const startId=location.hash.replace("#","");
-showPage(pageIds.includes(startId)?pageIds.indexOf(startId):0,false);
+if(pageIds.includes(startId) && startId!=="home"){
+  showPage(startId==="anniversary-gate"?1:0,false);
+}else showPage(0,false);
