@@ -265,8 +265,9 @@ function checkAnniversary(){
 }
 
 /* ===== Memory matching game ===== */
-const memoryGameImages = Array.from({length:18},(_,i)=>`assets/game-photos/${i+1}.avif`);
-const memoryPairs = memoryGameImages.flatMap(src=>[src,src]);
+const memoryGameImages = Array.from({length:9},(_,i)=>`assets/game-photos/${i+1}.avif`);
+// 18 cards total: 9 unique memories, with each memory appearing twice.
+const memoryPairs = memoryGameImages.flatMap((_,i)=>[i,i]);
 let memoryDeck = [];
 let memoryFlipped = [];
 let memoryMatched = new Set();
@@ -296,27 +297,18 @@ function createMemoryGame(){
   const complete=document.getElementById("gameComplete");
   if(complete)complete.hidden=true;
   board.classList.remove("game-won");
-  const heartLayout=[
-    [null,null,0,1,null,2,3,null,null],
-    [null,4,5,6,7,8,9,10,null],
-    [11,12,13,14,15,16,17,18,19],
-    [null,20,21,22,23,24,25,26,null],
-    [null,null,27,28,29,30,31,null,null],
-    [null,null,null,32,33,34,null,null,null],
-    [null,null,null,null,35,null,null,null,null]
-  ];
-  board.innerHTML=heartLayout.flatMap(row=>row.map(index=>{
-    if(index===null)return '<span class="memory-game-spacer" aria-hidden="true"></span>';
-    const src=memoryDeck[index];
+  // Compact 18-card board: 6 columns × 3 rows.
+  board.innerHTML=memoryDeck.map((pairId,index)=>{
+    const src=memoryGameImages[pairId];
     return `<button class="memory-game-card" type="button" data-game-index="${index}" aria-label="Hidden memory card ${index+1}">
       <span class="memory-card-inner">
         <span class="memory-card-face memory-card-back" aria-hidden="true"><span>♥</span></span>
         <span class="memory-card-face memory-card-front">
-          <img src="${src}" alt="Memory ${Math.floor(index/2)+1}" loading="eager">
+          <img src="${src}" alt="Memory ${pairId+1}" loading="eager">
         </span>
       </span>
     </button>`;
-  })).join("");
+  }).join("");
   board.querySelectorAll(".memory-game-card").forEach(card=>{
     card.addEventListener("click",()=>flipMemoryCard(Number(card.dataset.gameIndex)));
   });

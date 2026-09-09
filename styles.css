@@ -825,3 +825,24 @@ main{padding-top:76px}
   .memory-card-back span,.game-complete-heart{animation:none}
   .memory-game-card.is-matched,.memory-game-card.celebrate,.game-complete,.memory-game-grid.game-won{animation:none}
 }
+
+/* Compact 18-card memory game: 6 × 3 */
+.memory-game-grid{
+  display:grid !important;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  grid-template-rows:repeat(3,1fr);
+  gap:10px;
+  width:min(680px,92vw);
+  max-width:680px;
+  margin:24px auto 0;
+  padding:10px;
+}
+.memory-game-card{
+  width:100% !important;
+  aspect-ratio:1/1;
+  min-width:0 !important;
+}
+.memory-game-spacer{display:none !important}
+@media(max-width:700px){
+  .memory-game-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;width:min(560px,94vw);padding:6px}
+}
