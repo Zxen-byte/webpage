@@ -1,54 +1,36 @@
-# Our Love Letter — GitHub-only page-by-page edition
+# Valentine's Love Letter — GitHub-only edition
 
-This is the GitHub Pages version of the Valentine website. It uses no Firebase, database, login, or backend.
+A standalone romantic website for GitHub Pages. No Firebase, database, login, build step, or backend.
 
-## Page-by-page flow
+## Publish / update the website
 
-1. Home / Hello
-2. Time Since We Met
-3. Our Memories
-4. My Message
-5. Our Story
-6. Things I Love
-7. Our Song
-8. Secret Message
-9. Forever
+1. Open `site-data.js` in your GitHub repository.
+2. Edit the text, dates, reasons, colors, and media paths.
+3. Put photos/audio inside `assets/`.
+4. Commit your changes to GitHub.
+5. GitHub Pages serves the updated version to everyone.
 
-The **Next** and **Back** buttons move through the pages. The top navigation can jump directly to a page.
+### Using the built-in editor
 
-## Publish changes
+The **Edit Website** panel is now a preview editor. It does not pretend to write to GitHub. Click **Save for GitHub** to download a new `site-data.js`, then upload/replace that file in GitHub and commit it.
 
-The published source of truth is `site-data.js`.
+For media, upload the actual files to `assets/` in GitHub and use paths such as `assets/hero.jpg` or `assets/background.mp3`.
 
-1. Open **Edit Website**.
-2. Change your content.
-3. Click **Save for GitHub ♥**.
-4. Your browser downloads `site-data.js`.
-5. Upload/replace `site-data.js` in your GitHub repository.
-6. Commit the change.
-7. GitHub Pages publishes the update for everyone.
+## Important limitation
 
-## Photos and music
-
-Upload files into the repository's `assets/` folder, for example:
-
-- `assets/hero.jpg`
-- `assets/memory-1.jpg`
-- `assets/song.mp3`
-- `assets/background.mp3`
-
-Then use those relative paths in `site-data.js`.
-
-Background music can be enabled with:
-
-`backgroundMusicEnabled: true`
-
-Browsers can block autoplay until the visitor interacts with the page.
+A GitHub Pages website cannot securely commit files back into your GitHub repository from the browser without giving the public site a GitHub credential. This version deliberately avoids that security risk.
 
 ## Files
+- `index.html` — page structure
+- `styles.css` — design and animations
+- `app.js` — editor, gallery, lightbox, counter, audio, accessibility behavior
+- `site-data.js` — **the main publishing file**
+- `assets/` — published photos and audio
 
-- `index.html` — structure
-- `styles.css` — design and page transitions
-- `app.js` — editor, page navigation, gallery, counter, lightbox and audio
-- `site-data.js` — published content
-- `assets/` — your media
+## Music
+
+Use local files in `assets/` for public music. Browsers may block autoplay until the visitor interacts with the page.
+
+## Privacy
+
+There is no backend or analytics in this project. Published content is served publicly by GitHub Pages.
