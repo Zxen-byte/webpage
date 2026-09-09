@@ -875,3 +875,44 @@ html:not(.js-ready) .page-section:first-of-type{display:flex !important}
 .game-image-preview{width:100%;height:120px;margin-top:9px;border-radius:14px;overflow:hidden;background:rgba(139,30,63,.05);display:flex;align-items:center;justify-content:center;color:var(--primary,#8b1e3f);font-size:13px}
 .game-image-preview img{width:100%;height:100%;object-fit:cover}
 .memory-image-editor .photo-input{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+
+
+/* =========================================================
+   TEMPLATE-INSPIRED LOVE EFFECTS + CURSOR TRAIL
+   ========================================================= */
+.ambient-effects{position:fixed;inset:0;pointer-events:none;z-index:3;overflow:hidden}
+.ambient-heart{position:absolute;bottom:-40px;opacity:0;color:rgba(169,75,104,.18);font-size:clamp(14px,2vw,25px);filter:drop-shadow(0 3px 10px rgba(169,75,104,.10));animation:ambientFloat var(--float-time,12s) ease-in forwards;will-change:transform,opacity}
+@keyframes ambientFloat{0%{transform:translate3d(0,20px,0) rotate(0) scale(.75);opacity:0}12%{opacity:.7}55%{transform:translate3d(var(--drift,18px),-52vh,0) rotate(150deg) scale(1)}100%{transform:translate3d(calc(var(--drift,18px) * -1),-115vh,0) rotate(330deg) scale(.55);opacity:0}}
+.cursor-sparkle{position:fixed;left:0;top:0;width:9px;height:9px;border-radius:50%;pointer-events:none;z-index:9998;background:radial-gradient(circle,rgba(255,186,207,.98) 0%,rgba(169,75,104,.55) 45%,transparent 75%);animation:cursorSparkle .65s ease-out forwards;will-change:transform,opacity}
+.cursor-sparkle.star:after{content:"✦";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:10px;color:rgba(255,235,240,.95)}
+@keyframes cursorSparkle{0%{opacity:1;transform:translate(-50%,-50%) scale(.7)}45%{opacity:.9;transform:translate(-50%,-50%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.2) translateY(-8px)}}
+.click-heart{position:fixed;pointer-events:none;z-index:9997;font-size:22px;filter:drop-shadow(0 4px 12px rgba(169,75,104,.22));animation:clickHeartPop 1.05s cubic-bezier(.2,.75,.2,1) forwards;will-change:transform,opacity}
+@keyframes clickHeartPop{0%{opacity:0;transform:translate(-50%,-40%) scale(.2) rotate(-10deg)}20%{opacity:1;transform:translate(-50%,-55%) scale(1.15) rotate(5deg)}100%{opacity:0;transform:translate(calc(-50% + var(--heart-drift,0px)),-125%) scale(.75) rotate(var(--heart-rotate,18deg))}}
+
+/* A soft entrance for every page and its contents */
+.page-section.active-page{animation:softPageIn .6s cubic-bezier(.2,.75,.2,1) both}
+.page-section.active-page > *{animation:contentRise .72s cubic-bezier(.2,.75,.2,1) both;animation-delay:calc(var(--content-delay,0ms) + 60ms)}
+.page-section.active-page > *:nth-child(2){--content-delay:90ms}
+.page-section.active-page > *:nth-child(3){--content-delay:160ms}
+.page-section.active-page > *:nth-child(4){--content-delay:230ms}
+.page-section.active-page > *:nth-child(5){--content-delay:300ms}
+.page-section.active-page .section-heading{animation:contentRise .72s cubic-bezier(.2,.75,.2,1) 90ms both}
+.page-section.active-page .counter-grid > div{animation:cardLift .65s cubic-bezier(.2,.75,.2,1) both;animation-delay:calc(120ms + var(--i,0) * 65ms)}
+.page-section.active-page .memory-card{animation:cardLift .7s cubic-bezier(.2,.75,.2,1) both;animation-delay:calc(90ms + var(--i,0) * 55ms)}
+.page-section.active-page .reason{animation:cardLift .65s cubic-bezier(.2,.75,.2,1) both;animation-delay:calc(100ms + var(--i,0) * 70ms)}
+.page-section.active-page .event{animation:contentRise .7s cubic-bezier(.2,.75,.2,1) both;animation-delay:calc(90ms + var(--i,0) * 90ms)}
+@keyframes contentRise{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes cardLift{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+
+/* Gentle ongoing motion on important content */
+.hero-photo.frame{animation:photoBreathe 5s ease-in-out infinite alternate}
+@keyframes photoBreathe{from{box-shadow:0 30px 80px rgba(91,38,57,.14)}to{box-shadow:0 34px 90px rgba(169,75,104,.20)}}
+.memory-card img,.final-photo img{transition:transform .7s cubic-bezier(.2,.75,.2,1),filter .4s ease}
+.memory-card:hover img,.final-photo:hover img{transform:scale(1.035);filter:saturate(1.05)}
+.primary-btn,.secondary-btn,.yes-choice,.page-arrow{position:relative;overflow:hidden}
+.primary-btn:after,.secondary-btn:after,.yes-choice:after,.page-arrow:after{content:"";position:absolute;top:-40%;left:-90%;width:55%;height:180%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .65s ease;pointer-events:none}
+.primary-btn:hover:after,.secondary-btn:hover:after,.yes-choice:hover:after,.page-arrow:hover:after{left:135%}
+
+@media (pointer:fine){body{cursor:default}.page-arrow,.primary-btn,.secondary-btn,.yes-choice,.edit-btn,.brand,.memory-card,.reason,.record,.reveal-btn{cursor:pointer}}
+@media (pointer:coarse){.cursor-sparkle{display:none}}
+@media (prefers-reduced-motion:reduce){.ambient-effects{display:none}.cursor-sparkle,.click-heart{display:none}.page-section.active-page>*{animation:none!important}.hero-photo.frame{animation:none}.memory-card img,.final-photo img{transition:none}}

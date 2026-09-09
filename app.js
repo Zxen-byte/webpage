@@ -260,6 +260,84 @@ window.addEventListener("pageshow",()=>{
   document.body.style.overflow="";
 });
 
+
+
+/* =========================================================
+   TEMPLATE-INSPIRED AMBIENT + CURSOR EFFECTS
+   ========================================================= */
+function setupLoveEffects(){
+  if(window.__loveEffectsReady)return;
+  window.__loveEffectsReady=true;
+  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if(reduced)return;
+
+  const ambient=document.createElement('div');
+  ambient.className='ambient-effects';
+  ambient.setAttribute('aria-hidden','true');
+  document.body.appendChild(ambient);
+
+  const symbols=['♥','♡','✦','✧','💕','✿'];
+  function spawnAmbient(){
+    if(document.visibilityState==='hidden')return;
+    if(ambient.children.length>=14)return;
+    const el=document.createElement('span');
+    el.className='ambient-heart';
+    el.textContent=symbols[Math.floor(Math.random()*symbols.length)];
+    el.style.left=(Math.random()*100)+'%';
+    el.style.setProperty('--drift',((Math.random()-.5)*90)+'px');
+    el.style.setProperty('--float-time',(10+Math.random()*8)+'s');
+    el.style.animationDelay=(Math.random()*.4)+'s';
+    el.style.fontSize=(12+Math.random()*18)+'px';
+    ambient.appendChild(el);
+    setTimeout(()=>el.remove(),19000);
+  }
+  for(let i=0;i<5;i++)setTimeout(spawnAmbient,i*650);
+  window.__ambientTimer=setInterval(spawnAmbient,900);
+
+  let last=0;
+  document.addEventListener('mousemove',e=>{
+    if(document.visibilityState==='hidden'||document.getElementById('editor')?.classList.contains('open'))return;
+    const now=performance.now();
+    if(now-last<48)return;
+    last=now;
+    const s=document.createElement('span');
+    s.className='cursor-sparkle'+(Math.random()>.55?' star':'');
+    s.style.left=e.clientX+'px';
+    s.style.top=e.clientY+'px';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),700);
+  },{passive:true});
+
+  document.addEventListener('click',e=>{
+    if(document.getElementById('editor')?.classList.contains('open'))return;
+    if(e.target.closest('input,textarea,select,.editor,.modal,.page-arrow'))return;
+    const hearts=['♥','♡','💕','💗','✦'];
+    for(let i=0;i<2;i++){
+      const h=document.createElement('span');
+      h.className='click-heart';
+      h.textContent=hearts[Math.floor(Math.random()*hearts.length)];
+      h.style.left=(e.clientX+(Math.random()-.5)*22)+'px';
+      h.style.top=(e.clientY+(Math.random()-.5)*16)+'px';
+      h.style.setProperty('--heart-drift',((Math.random()-.5)*55)+'px');
+      h.style.setProperty('--heart-rotate',((Math.random()-.5)*45)+'deg');
+      h.style.animationDelay=(i*65)+'ms';
+      h.style.fontSize=(16+Math.random()*13)+'px';
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),1200);
+    }
+  },{passive:true});
+}
+
+function animateCurrentPage(){
+  const page=document.getElementById(pageIds?.[currentPage]);
+  if(!page)return;
+  page.classList.remove('page-animating');
+  void page.offsetWidth;
+  page.classList.add('page-animating');
+  page.querySelectorAll('.memory-card,.reason,.event,.counter-grid > div').forEach((el,i)=>el.style.setProperty('--i',i));
+  setTimeout(()=>page.classList.remove('page-animating'),1000);
+}
+
 /* Page-by-page navigation: one section visible at a time. */
 const pageIds = ["home","anniversary-gate","counter","continue-gate","memories","memory-game","message","story","love","song","surprise","forever"];
 let currentPage = 0;
@@ -290,6 +368,7 @@ function showPage(index, updateHash=true){
     header.classList.toggle("header-light",!isDark);
     header.setAttribute("data-section-theme",isDark?"dark":"light");
   }
+  animateCurrentPage();
   if(updateHash) history.replaceState(null,"","#"+pageIds[currentPage]);
   const page=document.getElementById(pageIds[currentPage]);
   if(page) page.scrollTop=0;
@@ -476,6 +555,7 @@ document.addEventListener("keydown",e=>{
   if(e.key==="ArrowRight" || e.key==="PageDown"){e.preventDefault();document.getElementById("pageNext")?.click()}
   if(e.key==="ArrowLeft" || e.key==="PageUp"){e.preventDefault();goToPage(currentPage-1)}
 });
+setupLoveEffects();
 const startId=location.hash.replace("#","");
 if(pageIds.includes(startId) && startId!=="home"){
   const startIndex=pageIds.indexOf(startId);
