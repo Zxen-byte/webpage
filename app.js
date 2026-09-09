@@ -1,9 +1,10 @@
 const KEY="valentine-love-letter-preview-v2";
-const defaultData = normalize(window.SITE_DATA || {});
+const publishedData = window.SITE_DATA || {};
+const defaultData = normalize(publishedData);
 let data=load(); let lightIndex=0; let draft;
 
 function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return x?normalize(x):structuredClone(defaultData)}catch{return structuredClone(defaultData)}}
-function normalize(x){return {...structuredClone(defaultData),...x,settings:{...defaultData.settings,...(x.settings||{})},memories:Array.isArray(x.memories)?x.memories:[],reasons:Array.isArray(x.reasons)?x.reasons:defaultData.reasons,events:Array.isArray(x.events)?x.events:defaultData.events}}
+function normalize(x){const base=publishedData||{};return {...structuredClone(base),...x,settings:{...(base.settings||{}),...(x.settings||{})},memories:Array.isArray(x.memories)?x.memories:(Array.isArray(base.memories)?base.memories:[]),reasons:Array.isArray(x.reasons)?x.reasons:(Array.isArray(base.reasons)?base.reasons:[]),events:Array.isArray(x.events)?x.events:(Array.isArray(base.events)?base.events:[])}}
 function save(){localStorage.setItem(KEY,JSON.stringify(data));toast("Saved with love ♥")}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function toast(t){const x=document.getElementById("toast");x.textContent=t;x.classList.add("show");clearTimeout(window._toast);window._toast=setTimeout(()=>x.classList.remove("show"),2200)}
