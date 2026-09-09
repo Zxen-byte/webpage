@@ -632,6 +632,7 @@ main{padding-top:0}
 .yes-choice{
   left:calc(50% - 118px);
   background:var(--primary);
+  z-index:2;
   color:#fff;
   box-shadow:0 12px 28px rgba(139,30,63,.22);
 }
@@ -642,6 +643,7 @@ main{padding-top:0}
 .no-choice{
   left:calc(50% + 10px);
   background:#d9a1ad;
+  z-index:3;
   color:#fff;
   box-shadow:0 10px 24px rgba(91,38,57,.12);
 }

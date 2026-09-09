@@ -530,19 +530,45 @@ function moveNoButton(){
   if(!continueNo||!continueArea)return;
   const areaRect=continueArea.getBoundingClientRect();
   const buttonRect=continueNo.getBoundingClientRect();
+  const yesRect=continueYes?.getBoundingClientRect();
   const pad=8;
   const maxX=Math.max(pad,areaRect.width-buttonRect.width-pad);
   const maxY=Math.max(pad,areaRect.height-buttonRect.height-pad);
-  const x=pad+Math.random()*Math.max(0,maxX-pad);
-  const y=pad+Math.random()*Math.max(0,maxY-pad);
-  continueNo.style.left=`${x}px`;
-  continueNo.style.top=`${y}px`;
+
+  // Keep the runaway No button inside its own area and never place it over Yes.
+  const safeGap=18;
+  const yesLeft=yesRect ? yesRect.left-areaRect.left : areaRect.width/2-118;
+  const yesTop=yesRect ? yesRect.top-areaRect.top : 52;
+  const yesRight=yesLeft+(yesRect?.width||108);
+  const yesBottom=yesTop+(yesRect?.height||50);
+
+  for(let attempt=0;attempt<40;attempt++){
+    const x=pad+Math.random()*Math.max(0,maxX-pad);
+    const y=pad+Math.random()*Math.max(0,maxY-pad);
+    const overlapsYes =
+      x < yesRight+safeGap && x+buttonRect.width > yesLeft-safeGap &&
+      y < yesBottom+safeGap && y+buttonRect.height > yesTop-safeGap;
+    if(!overlapsYes){
+      continueNo.style.left=`${x}px`;
+      continueNo.style.top=`${y}px`;
+      return;
+    }
+  }
+
+  // Fallback: place it at the far right, vertically centered.
+  continueNo.style.left=`${Math.max(pad,maxX)}px`;
+  continueNo.style.top=`${Math.min(Math.max(pad,52),maxY)}px`;
 }
-["pointerenter","mouseover","touchstart","focus"].forEach(evt=>{
-  continueNo?.addEventListener(evt,e=>{
-    e.preventDefault();
-    moveNoButton();
-  },{passive:false});
+continueNo?.addEventListener("pointerenter",e=>{
+  e.preventDefault();
+  moveNoButton();
+});
+continueNo?.addEventListener("touchstart",e=>{
+  e.preventDefault();
+  moveNoButton();
+},{passive:false});
+continueNo?.addEventListener("focus",e=>{
+  moveNoButton();
 });
 continueNo?.addEventListener("click",e=>{e.preventDefault();moveNoButton()});
 continueYes?.addEventListener("click",()=>{
