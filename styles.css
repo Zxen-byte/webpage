@@ -596,6 +596,7 @@ main{padding-top:0}
   background:rgba(255,255,255,.62);
   box-shadow:0 28px 80px rgba(91,38,57,.12);
   backdrop-filter:blur(18px);
+  overflow:visible;
 }
 .continue-card h2{
   font-family:var(--heading);
@@ -655,8 +656,7 @@ main{padding-top:0}
   background:#d9a1ad;
   color:#fff;
   box-shadow:0 10px 24px rgba(91,38,57,.12);
-  /* Starts beside Yes; after interaction JS temporarily turns it into a
-     viewport-level runaway button so it can escape the card completely. */
+  /* Starts beside Yes; after interaction it may move anywhere inside the question card. */
   --no-x:0px;
   --no-y:0px;
   transform:translate(var(--no-x),var(--no-y));

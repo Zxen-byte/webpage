@@ -527,6 +527,7 @@ anniversaryInput?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDe
 const continueYes=document.getElementById("continueYes");
 const continueNo=document.getElementById("continueNo");
 const continueArea=document.getElementById("continueChoiceArea");
+const continueCard=document.querySelector(".continue-card");
 
 function resetNoButton(){
   if(!continueNo)return;
@@ -538,34 +539,32 @@ function resetNoButton(){
 }
 
 function moveNoButton(){
-  if(!continueNo)return;
-  // After the first interaction, let No escape the card and roam around the
-  // usable viewport. Keep it away from the header and bottom navigation.
+  if(!continueNo || !continueCard)return;
+
+  // Keep the playful No button inside the question card only.
   continueNo.classList.add("no-roaming");
-  const w=window.innerWidth;
-  const h=window.innerHeight;
+  const cardRect=continueCard.getBoundingClientRect();
   const bw=continueNo.offsetWidth || 108;
   const bh=continueNo.offsetHeight || 50;
-  const margin=18;
-  const headerSafe=92;
-  const footerSafe=92;
-  const minX=margin;
-  const maxX=Math.max(minX,w-bw-margin);
-  const minY=Math.min(headerSafe,Math.max(margin,h-bh-footerSafe));
-  const maxY=Math.max(minY,h-bh-footerSafe);
-
-  // Try several positions and avoid the Yes button/card center so the joke
-  // never blocks the actual choice.
+  const pad=24;
+  const minX=cardRect.left+pad;
+  const maxX=Math.max(minX,cardRect.right-bw-pad);
+  const minY=cardRect.top+pad;
+  const maxY=Math.max(minY,cardRect.bottom-bh-pad);
   const yesRect=continueYes?.getBoundingClientRect();
-  let x=minX,y=minY,ok=false;
-  for(let i=0;i<30;i++){
+
+  let x=minX, y=minY, ok=false;
+  for(let i=0;i<60;i++){
     x=minX+Math.random()*Math.max(1,maxX-minX);
     y=minY+Math.random()*Math.max(1,maxY-minY);
     const r={left:x,right:x+bw,top:y,bottom:y+bh};
-    const overlapsYes=yesRect && !(r.right<yesRect.left-24 || r.left>yesRect.right+24 || r.bottom<yesRect.top-24 || r.top>yesRect.bottom+24);
+    const overlapsYes=yesRect && !(r.right<yesRect.left-18 || r.left>yesRect.right+18 || r.bottom<yesRect.top-18 || r.top>yesRect.bottom+18);
     if(!overlapsYes){ok=true;break;}
   }
-  if(!ok){x=maxX;y=maxY;}
+  if(!ok){
+    x=Math.min(maxX,Math.max(minX,cardRect.right-bw-pad));
+    y=Math.min(maxY,Math.max(minY,cardRect.bottom-bh-pad));
+  }
   continueNo.style.setProperty("--no-left",`${Math.round(x)}px`);
   continueNo.style.setProperty("--no-top",`${Math.round(y)}px`);
 }
