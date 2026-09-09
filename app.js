@@ -2,13 +2,13 @@ const defaultData=window.SITE_DATA||{
 heroTitle:"Happy Valentine's Day ♥",heroTo:"To My Favorite Person",heroSubtitle:"Every moment with you is a memory I never want to forget.",
 name:"[Your Name]",letter:`<p><em>My love,</em></p><p>I don't always know how to put my feelings into words, but I want you to know how grateful I am to have you in my life. Somehow, ordinary days became my favorite days simply because you were there.</p><p>Thank you for every laugh, every quiet moment, every memory, and every little way you make life feel warmer.</p><p>I choose you, again and again.</p>`,signature:"Forever yours,<br><b>[Your Name] ♥</b>",
 secret:"You are one of the best things that ever happened to me. No matter where life takes us, I hope we keep choosing each other.",songText:"This song always reminds me of you.",songLink:"",metDate:"2024-06-14T19:00",anniversary:"2026-07-28",accessPassword:"love",
-finalMessage:"If I could choose one person to make memories with over and over again, I would choose you every single time.",heroImage:"",counterImage:"",messageImage:"",storyImage:"",loveImage:"",songImage:"",surpriseImage:"",audio:"",backgroundAudio:"",backgroundMusicEnabled:true,backgroundMusicVolume:0.18,memoryGameImages:Array.from({length:9},(_,i)=>`assets/game-photos/${i+1}.avif`),
-settings:{primary:"#8b1e3f",background:"#fff9f5",text:"#34272b",heading:"Georgia,serif",body:"'Trebuchet MS',sans-serif",mood:"petals"},
+finalMessage:"If I could choose one person to make memories with over and over again, I would choose you every single time.",heroImage:"",counterImage:"",messageImage:"",storyImage:"",loveImage:"",songImage:"",surpriseImage:"",audio:"",backgroundAudio:"",backgroundMusicEnabled:true,backgroundMusicVolume:0.18,
+memoryGameImages:Array.from({length:9},(_,i)=>`assets/game-photos/${i+1}.avif`),settings:{primary:"#8b1e3f",background:"#fff9f5",text:"#34272b",heading:"Georgia,serif",body:"'Trebuchet MS',sans-serif",mood:"petals"},
 memories:[],reasons:["Your smile","Your laugh","The way you care about people","The way you make ordinary days special"],
 events:[{date:"2023",title:"The Beginning",description:"Somehow, two people met and started a story neither of us expected.",image:""},{date:"2024",title:"Our Favorite Memories",description:"Every day with you became another reason to smile.",image:""}]
 };
 let data=normalize(window.SITE_DATA||defaultData); let lightIndex=0; let draft;
-function normalize(x){return {...structuredClone(defaultData),...x,memoryGameImages:Array.isArray(x.memoryGameImages)&&x.memoryGameImages.length===9?x.memoryGameImages:defaultData.memoryGameImages,settings:{...defaultData.settings,...(x.settings||{})},memories:Array.isArray(x.memories)?x.memories:[],reasons:Array.isArray(x.reasons)?x.reasons:defaultData.reasons,events:Array.isArray(x.events)?x.events:defaultData.events}}
+function normalize(x){return {...structuredClone(defaultData),...x,settings:{...defaultData.settings,...(x.settings||{})},memories:Array.isArray(x.memories)?x.memories:[],reasons:Array.isArray(x.reasons)?x.reasons:defaultData.reasons,memoryGameImages:Array.isArray(x.memoryGameImages)&&x.memoryGameImages.length===9?x.memoryGameImages:defaultData.memoryGameImages,events:Array.isArray(x.events)?x.events:defaultData.events}}
 function downloadGitHubConfig(){
   collectEditor();
   const clean=structuredClone(data);
@@ -78,12 +78,11 @@ function renderGallery(){
 function renderTimeline(){document.getElementById("timeline").innerHTML=data.events.map(e=>`<article class="event reveal"><time>${esc(e.date)}</time><h3>${esc(e.title)}</h3><p>${esc(e.description)}</p>${e.image?`<img src="${e.image}" alt="">`:""}</article>`).join("");observeReveals()}
 function renderReasons(){document.getElementById("reasons").innerHTML=data.reasons.map(r=>`<div class="reason reveal"><span>${esc(r)} ♥</span></div>`).join("");observeReveals()}
 function renderEditorLists(){
- const gameList=document.getElementById("gameEditorList");
- if(gameList){
-   gameList.innerHTML=data.memoryGameImages.map((src,i)=>`<div class="edit-item game-edit-item"><strong>Game Memory ${i+1}</strong><div class="photo-input"><input data-game-memory="${i}" value="${esc(src)}" placeholder="assets/game-photos/1.avif"><button type="button" class="upload-btn" data-game-upload="${i}">Upload</button></div><small class="field-help">This photo is used twice as one matching pair.</small></div>`).join("");
-   gameList.querySelectorAll("[data-game-memory]").forEach(x=>x.oninput=()=>{data.memoryGameImages[Number(x.dataset.gameMemory)]=x.value;});
-   gameList.querySelectorAll("[data-game-upload]").forEach(b=>b.onclick=()=>pickImage(dataUrl=>{data.memoryGameImages[Number(b.dataset.gameUpload)]=dataUrl;render();toast("Memory game photo updated ♥")}));
- }
+  const gameList=document.getElementById("memoryGameImageEditorList");
+  if(gameList){gameList.innerHTML=data.memoryGameImages.map((src,i)=>`<div class="edit-item game-image-edit"><strong>Game image ${i+1}</strong><div class="photo-input"><input data-game-image="${i}" placeholder="assets/game-photos/${i+1}.avif" value="${esc(src||"")}"><button type="button" class="upload-btn game-image-upload" data-i="${i}">Upload</button></div><small class="field-help">This image is used for pair ${i+1} (2 cards).</small></div>`).join("");
+    gameList.querySelectorAll("[data-game-image]").forEach(x=>x.oninput=()=>{data.memoryGameImages[+x.dataset.gameImage]=x.value; if(memoryFinished) createMemoryGame(true);});
+    gameList.querySelectorAll(".game-image-upload").forEach(b=>b.onclick=()=>pickImage(dataUrl=>{data.memoryGameImages[+b.dataset.i]=dataUrl;render();if(memoryFinished)createMemoryGame(true);toast(`Game image ${+b.dataset.i+1} added ♥`)}));
+  }
  document.getElementById("memoryEditorList").innerHTML=data.memories.map((m,i)=>`<div class="edit-item"><strong>Memory ${i+1}</strong><input data-m="${i}" data-field="date" placeholder="Date" value="${esc(m.date)}"><input data-m="${i}" data-field="title" placeholder="Title" value="${esc(m.title)}"><textarea data-m="${i}" data-field="caption" placeholder="Caption">${esc(m.caption)}</textarea><input data-m="${i}" data-field="image" placeholder="assets/memory-1.jpg" value="${esc(m.image||"")}"><button class="mini-danger delete-memory" data-i="${i}">Delete</button></div>`).join("");
  document.getElementById("reasonEditorList").innerHTML=data.reasons.map((r,i)=>`<div class="edit-item"><input data-r="${i}" value="${esc(r)}"><button class="mini-danger delete-reason" data-i="${i}">Delete</button></div>`).join("");
  document.getElementById("eventEditorList").innerHTML=data.events.map((e,i)=>`<div class="edit-item"><strong>Story ${i+1}</strong><input data-e="${i}" data-field="date" placeholder="Date" value="${esc(e.date)}"><input data-e="${i}" data-field="title" placeholder="Title" value="${esc(e.title)}"><textarea data-e="${i}" data-field="description" placeholder="Description">${esc(e.description)}</textarea><input data-e="${i}" data-field="image" placeholder="assets/story.jpg" value="${esc(e.image||"")}"><button class="mini-danger delete-event" data-i="${i}">Delete</button></div>`).join("");
@@ -164,7 +163,6 @@ document.addEventListener("keydown",tryStartMusic,{passive:true});
 document.getElementById("openHeart").onclick=()=>goToPage(1);
 document.getElementById("revealBtn").onclick=()=>{document.getElementById("secret").hidden=false;document.getElementById("revealBtn").textContent="♥ A little piece of my heart";};
 document.getElementById("audio").onplay=()=>document.getElementById("record").classList.add("playing");document.getElementById("audio").onpause=()=>document.getElementById("record").classList.remove("playing");
-document.getElementById("gameResetBtn").onclick=()=>{createMemoryGame();showPage(5);toast("Memory game reset ♥")};
 document.getElementById("addMemory").onclick=()=>{data.memories.push({date:"",title:"",caption:"",image:""});render()};
 document.getElementById("addReason").onclick=()=>{data.reasons.push("Something I love about you");render()};
 document.getElementById("addEvent").onclick=()=>{data.events.push({date:"",title:"A New Chapter",description:"Tell the story of this moment.",image:""});render()};
@@ -228,6 +226,7 @@ let currentPage = 0;
 let anniversaryVerified = false;
 let continueVerified = false;
 function showPage(index, updateHash=true){
+  if(index===5 && memoryFinished){const board=document.getElementById("memoryGame"); if(board){board.classList.add("game-won"); board.querySelectorAll(".memory-game-card").forEach(card=>card.classList.add("is-matched","celebrate"));} const complete=document.getElementById("gameComplete"); if(complete)complete.hidden=false;}
   currentPage = Math.max(0, Math.min(pageIds.length-1, index));
   document.querySelectorAll(".page-section").forEach((section,i)=>{
     section.classList.toggle("active-page", i===currentPage);
@@ -272,10 +271,10 @@ function checkAnniversary(){
 }
 
 /* ===== Memory matching game ===== */
-function getMemoryGameImages(){return Array.isArray(data.memoryGameImages)&&data.memoryGameImages.length===9?data.memoryGameImages:Array.from({length:9},(_,i)=>`assets/game-photos/${i+1}.avif`)}
 // 18 cards total: 9 unique memories, with each memory appearing twice.
-let memoryGameImages = getMemoryGameImages();
-let memoryPairs = memoryGameImages.flatMap((_,i)=>[i,i]);
+function getMemoryGameImages(){return Array.isArray(data.memoryGameImages)&&data.memoryGameImages.length===9?data.memoryGameImages:defaultData.memoryGameImages;}
+let memoryGameImages=getMemoryGameImages();
+function getMemoryPairs(){return memoryGameImages.flatMap((_,i)=>[i,i]);}
 let memoryDeck = [];
 let memoryFlipped = [];
 let memoryMatched = new Set();
@@ -294,19 +293,18 @@ function updateGameStatus(){
   const el=document.getElementById("gamePairsFound");
   if(el) el.textContent=String(Math.floor(memoryMatched.size/2));
 }
-function createMemoryGame(){
-  memoryGameImages=getMemoryGameImages();
-  memoryPairs=memoryGameImages.flatMap((_,i)=>[i,i]);
+function createMemoryGame(preserveFinished=false){
   const board=document.getElementById("memoryGame");
   if(!board)return;
-  memoryDeck=shuffleDeck(memoryPairs);
+  memoryGameImages=getMemoryGameImages();
+  memoryDeck=shuffleDeck(getMemoryPairs());
   memoryFlipped=[];
   memoryMatched=new Set();
   memoryBusy=false;
-  memoryFinished=false;
+  memoryFinished=preserveFinished || sessionStorage.getItem("valentineMemoryFinished")==="1";
   const complete=document.getElementById("gameComplete");
-  if(complete)complete.hidden=true;
-  board.classList.remove("game-won");
+  if(complete)complete.hidden=!memoryFinished;
+  board.classList.toggle("game-won",memoryFinished);
   // Compact 18-card board: 6 columns × 3 rows.
   board.innerHTML=memoryDeck.map((pairId,index)=>{
     const src=memoryGameImages[pairId];
@@ -323,6 +321,7 @@ function createMemoryGame(){
     card.addEventListener("click",()=>flipMemoryCard(Number(card.dataset.gameIndex)));
   });
   updateGameStatus();
+  if(memoryFinished){document.querySelectorAll(".memory-game-card").forEach(card=>card.classList.add("is-matched","celebrate"));}
 }
 function setCardFlipped(index, flipped){
   const card=document.querySelector(`.memory-game-card[data-game-index="${index}"]`);
@@ -335,6 +334,7 @@ function setCardMatched(index){
 function finishMemoryGame(){
   if(memoryFinished)return;
   memoryFinished=true;
+  sessionStorage.setItem("valentineMemoryFinished","1");
   memoryBusy=true;
   document.querySelectorAll(".memory-game-card").forEach(card=>card.classList.add("is-matched","celebrate"));
   const board=document.getElementById("memoryGame");
