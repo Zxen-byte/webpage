@@ -224,6 +224,7 @@ function showPage(index, updateHash=true){
   const siteHeader=document.querySelector(".site-header");
   if(siteHeader) siteHeader.classList.toggle("header-dark", ["song","forever"].includes(id));
   document.querySelectorAll(".page-section").forEach((section,i)=>section.classList.toggle("active-page", i===currentPage));
+  if(id==="home" || id==="anniversary-gate"){ const card=document.querySelector(`#${id} .access-card`); if(card) card.classList.add("visible"); }
   const prev=document.getElementById("pagePrev"), next=document.getElementById("pageNext");
   const num=document.getElementById("pageNumber"), total=document.getElementById("pageTotal"), label=document.getElementById("nextLabel");
   if(prev) prev.disabled=currentPage===0;
@@ -265,7 +266,7 @@ function checkPassword(){
 function checkAnniversary(){
   const input=document.getElementById("anniversaryInput"), error=document.getElementById("anniversaryError");
   const entered=anniversaryInputToISO(input?.value);
-  const expected=String(data.anniversary||"").trim();
+  const expected=String(data.anniversary||"2026-07-28").trim();
   if(entered && expected && entered===expected){
     anniversaryVerified=true; if(error) error.textContent=""; goToPage(2); return true;
   }
