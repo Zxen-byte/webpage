@@ -166,14 +166,15 @@ body:before{width:360px;height:360px;left:-180px;top:18%;background:rgba(228,157
 body:after{width:430px;height:430px;right:-220px;bottom:-80px;background:rgba(166,92,119,.09)}
 .site-header{
   height:76px;min-height:76px;padding:0 clamp(20px,5vw,70px);
-  background:rgba(255,250,249,.70);border-bottom:1px solid rgba(169,75,104,.10);
-  box-shadow:0 8px 35px rgba(91,38,57,.05);backdrop-filter:blur(22px) saturate(1.15);
+  background:rgba(255,250,249,.48);border-bottom:1px solid rgba(169,75,104,.08);
+  box-shadow:none;backdrop-filter:blur(20px) saturate(1.12);
+  transition:background .35s ease,border-color .35s ease,color .35s ease;
 }
 .brand{font-size:26px;letter-spacing:.01em;text-shadow:0 3px 18px rgba(169,75,104,.12)}
 .brand:first-letter{font-size:35px}
 .edit-btn{background:rgba(255,255,255,.62);border-color:rgba(169,75,104,.16);box-shadow:0 6px 22px rgba(91,38,57,.05)}
-main{padding-top:76px}
-.page-section{height:calc(100vh - 76px);padding:clamp(30px,5vh,70px) clamp(22px,6vw,100px) 108px!important;position:relative;overflow:auto}
+main{padding-top:0}
+.page-section{height:100svh;min-height:100svh;padding:clamp(96px,11vh,125px) clamp(22px,6vw,100px) 108px!important;position:relative;overflow:auto}
 .page-section:before{content:"";position:absolute;inset:18px;border:1px solid rgba(169,75,104,.055);border-radius:34px;pointer-events:none}
 .page-section>*{position:relative;z-index:1}
 .page-section.active-page{animation:softPageIn .55s cubic-bezier(.2,.75,.2,1) both}
@@ -265,6 +266,23 @@ main{padding-top:76px}
 .final-photo{height:300px;border-radius:28px;border:1px solid rgba(255,255,255,.18);box-shadow:0 25px 60px rgba(20,0,10,.22);background:rgba(255,255,255,.07)}
 .forever{font-size:48px;text-shadow:0 5px 25px rgba(255,180,198,.16)}
 
+/* Adaptive glass header */
+.site-header.header-dark{
+  background:rgba(62,16,34,.58);
+  border-bottom-color:rgba(255,224,232,.10);
+  color:#fff;
+}
+.site-header.header-dark .brand{color:#fff7f9;text-shadow:0 3px 18px rgba(0,0,0,.16)}
+.site-header.header-dark .nav{color:rgba(255,240,244,.84)}
+.site-header.header-dark .nav a:hover{color:#fff}
+.site-header.header-dark .edit-btn,.site-header.header-dark .menu-btn{
+  color:#fff7f9;background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.16);
+}
+.site-header.header-light{
+  background:rgba(255,250,249,.48);
+  border-bottom-color:rgba(169,75,104,.08);
+}
+
 /* Navigation */
 .page-controls{bottom:24px;padding:0 clamp(20px,5vw,65px)}
 .page-arrow{min-width:118px;height:50px;border:1px solid rgba(169,75,104,.14);background:rgba(255,255,255,.74);box-shadow:0 12px 35px rgba(91,38,57,.09);backdrop-filter:blur(15px)}
@@ -285,8 +303,8 @@ main{padding-top:76px}
 }
 @media(max-width:700px){
   .site-header{height:64px;min-height:64px}
-  main{padding-top:64px}
-  .page-section{height:calc(100vh - 64px);padding:24px 16px 88px!important}
+  main{padding-top:0}
+  .page-section{height:100svh;min-height:100svh;padding:84px 16px 88px!important}
   .page-section:before{inset:10px;border-radius:24px}
   .hero h1{font-size:clamp(50px,15vw,72px)}
   .hero h2{font-size:34px}

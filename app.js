@@ -282,6 +282,14 @@ function showPage(index, updateHash=true){
   if(label){
     label.textContent=currentPage===pageIds.length-1?"Done":(currentPage===0?"Next":(currentPage===1?"Continue":(currentPage===3?"Choose Yes":(currentPage===5?(memoryFinished?"Next":"Matching..."):"Next"))));
   }
+  const header=document.querySelector(".site-header");
+  if(header){
+    const darkSections=new Set(["song","forever"]);
+    const isDark=darkSections.has(pageIds[currentPage]);
+    header.classList.toggle("header-dark",isDark);
+    header.classList.toggle("header-light",!isDark);
+    header.setAttribute("data-section-theme",isDark?"dark":"light");
+  }
   if(updateHash) history.replaceState(null,"","#"+pageIds[currentPage]);
   const page=document.getElementById(pageIds[currentPage]);
   if(page) page.scrollTop=0;
