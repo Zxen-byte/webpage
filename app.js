@@ -130,7 +130,7 @@ function setupPageNavigation(){
 document.getElementById("editBtn").onclick=()=>openEditor();document.getElementById("footerEdit").onclick=()=>openEditor();document.getElementById("closeEditor").onclick=closeEditor;document.getElementById("editorBackdrop").onclick=closeEditor;
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>switchTab(t.dataset.tab));
 document.getElementById("saveBtn").onclick=()=>{collectEditor();save();render();document.getElementById("exportBtn").click();closeEditor()};
-document.getElementById("openHeart").onclick=()=>{document.getElementById("memories").scrollIntoView({behavior:"smooth"});for(let i=0;i<10;i++)setTimeout(()=>{const h=document.createElement("span");h.className="particle";h.textContent="♥";h.style.left=(45+Math.random()*10)+"%";h.style.animationDuration="3s";document.getElementById("particles").appendChild(h);setTimeout(()=>h.remove(),3000)},i*80)};
+
 document.getElementById("revealBtn").onclick=()=>{document.getElementById("secret").hidden=false;document.getElementById("revealBtn").textContent="♥ A little piece of my heart";};
 document.getElementById("audio").onplay=()=>document.getElementById("record").classList.add("playing");document.getElementById("audio").onpause=()=>document.getElementById("record").classList.remove("playing");
 document.getElementById("addMemory").onclick=()=>{data.memories.push({date:"",title:"",caption:"",image:""});render()};

@@ -36,3 +36,6 @@ main > .page.active.hero{display:grid!important}
  .page-controls{padding:25px 15px 35px;flex-wrap:wrap}
  .page-controls button{min-width:135px}
 }
+
+/* Keep hidden dialogs truly hidden even though .modal sets display:grid. */
+.modal[hidden]{display:none!important}
