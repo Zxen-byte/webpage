@@ -448,3 +448,99 @@ main{padding-top:76px}
 @media(max-width:700px){
   .page-section{padding-bottom:105px !important;}
 }
+
+
+/* ===== Scroll-safe page layout fix =====
+   Short pages stay centered. When a page becomes taller than the viewport,
+   its content starts at the top and the page itself scrolls instead of
+   centering the overflow off-screen. */
+.page-section.active-page{
+  justify-content:safe center !important;
+  align-content:center;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  scroll-padding-top:28px;
+  scroll-padding-bottom:120px;
+}
+/* Keep the decorative frame attached to the visible page instead of letting
+   its absolute border scroll away when the page gets longer. */
+.page-section:before{
+  display:none !important;
+}
+.page-section{
+  border:1px solid rgba(169,75,104,.055);
+  border-radius:34px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.34);
+}
+/* A full-height inner frame that remains visible while the page scrolls. */
+.page-section:after{
+  pointer-events:none;
+}
+/* The letter should never hide its heading when the letter grows. */
+.letter-section.page-section.active-page{
+  justify-content:safe center !important;
+}
+.letter-section .letter{
+  max-height:none !important;
+  overflow:visible !important;
+}
+/* Story timeline grows naturally; its heart line stays continuous. */
+#story .timeline{
+  max-height:none !important;
+  overflow:visible !important;
+  position:relative;
+  padding-bottom:20px;
+}
+#story .timeline:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:1px;
+  background:#d9b8be;
+  pointer-events:none;
+}
+#story .timeline .event{position:relative;}
+#story .timeline .event:before{
+  left:-55px;
+}
+/* Memories can grow to any number of cards without a nested scroll box. */
+.memories.page-section .gallery{
+  max-height:none !important;
+  overflow:visible !important;
+  width:min(1200px,100%);
+}
+/* When there are many memory cards, let the page itself scroll. */
+.memories.page-section.active-page{
+  justify-content:safe center !important;
+}
+/* Same behavior for reasons and the final page. */
+#love .reason-grid,
+.ending.page-section .ending-inner{
+  max-height:none !important;
+  overflow:visible !important;
+}
+/* On short screens, start content at the top with comfortable breathing room. */
+@media(max-height:760px) and (min-width:701px){
+  .page-section.active-page{
+    justify-content:flex-start !important;
+    padding-top:48px !important;
+  }
+  .letter-section.page-section.active-page{
+    padding-top:42px !important;
+  }
+}
+@media(max-width:700px){
+  .page-section{
+    border-radius:24px;
+  }
+  .page-section.active-page{
+    justify-content:flex-start !important;
+    align-content:start;
+    padding-top:30px !important;
+  }
+  .letter-section.page-section.active-page{
+    padding-top:28px !important;
+  }
+}
