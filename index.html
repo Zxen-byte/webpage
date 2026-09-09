@@ -165,7 +165,7 @@
 <!-- Editor -->
 <aside id="editor" class="editor" aria-label="Website editor" aria-hidden="true">
   <div class="editor-head"><div><span class="eyebrow">Private editor</span><h2>Make it yours</h2></div><button id="closeEditor" class="icon-btn" aria-label="Close editor">×</button></div>
-  <div class="tabs"><button class="tab active" data-tab="content">Content</button><button class="tab" data-tab="memoriesTab">Memories</button><button class="tab" data-tab="style">Style</button><button class="tab" data-tab="data">Save</button></div>
+  <div class="tabs"><button class="tab active" data-tab="content">Content</button><button class="tab" data-tab="memoriesTab">Memories</button><button class="tab" data-tab="gameTab">Memory Game</button><button class="tab" data-tab="style">Style</button><button class="tab" data-tab="data">Save</button></div>
 
   <div id="tab-content" class="tab-panel active">
     <label>Hero title<input data-key="heroTitle"></label><label>Hero greeting<input data-key="heroTo"></label><label>Hero subtitle<textarea data-key="heroSubtitle"></textarea></label>
@@ -198,6 +198,13 @@
     <label>Our Song file<input data-key="audio" placeholder="assets/song.mp3"></label>
     <label>Background song<input data-key="backgroundAudio" placeholder="assets/background.mp3"></label>
     <div class="music-settings"><strong>Background music</strong><p class="muted">Browsers require a tap/click before music can start automatically.</p><label class="check-row"><input id="backgroundMusicToggle" type="checkbox"> Enable background music</label><label>Volume<input id="backgroundMusicVolume" type="range" min="0" max="0.5" step="0.01" value="0.18"></label></div>
+  </div>
+
+  <div id="tab-gameTab" class="tab-panel">
+    <h3 class="editor-section-title">Match Our Memories ♥</h3>
+    <p class="muted">The game has <b>18 cards</b> made from these 9 photos. Each photo appears twice, so each one forms a matching pair.</p>
+    <div id="gameEditorList"></div>
+    <div class="panel-actions"><button class="secondary-btn" id="gameResetBtn">Reset game</button></div>
   </div>
 
   <div id="tab-style" class="tab-panel">
