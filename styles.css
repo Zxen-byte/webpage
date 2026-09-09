@@ -37,5 +37,56 @@ main > .page.active.hero{display:grid!important}
  .page-controls button{min-width:135px}
 }
 
-/* Keep hidden dialogs truly hidden even though .modal sets display:grid. */
-.modal[hidden]{display:none!important}
+/* No-scroll page navigation */
+html,body{height:100%;overflow:hidden}
+body{min-height:100vh}
+.site-header{height:64px}
+.site-header .brand{margin:auto}
+.site-header .edit-btn{position:absolute;right:clamp(18px,4vw,60px)}
+main{height:calc(100vh - 64px);margin-top:64px;overflow:hidden}
+main > .page{
+  display:none!important;
+  width:100%;
+  height:100%;
+  min-height:0!important;
+  max-height:100%;
+  overflow:hidden;
+  padding:clamp(78px,8vh,105px) clamp(20px,6vw,100px) 105px!important;
+  position:relative;
+}
+main > .page.active{display:flex!important;flex-direction:column;justify-content:center}
+main > .page.active.hero{display:grid!important}
+main > .page .page-controls{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  height:82px;
+  padding:12px 20px 18px;
+  z-index:10;
+  background:linear-gradient(to top,rgba(255,249,245,.98),rgba(255,249,245,0));
+}
+main > .page .page-controls .page-count{font-weight:600}
+main > .page .page-controls button{min-width:145px}
+main > .page .section-heading{margin-bottom:22px}
+main > .page .gallery{width:100%;max-height:calc(100vh - 250px);overflow:hidden}
+main > .page .timeline{max-height:calc(100vh - 250px);overflow:hidden}
+main > .page .letter{max-height:calc(100vh - 240px);overflow:hidden}
+main > .page .reason-grid{max-height:calc(100vh - 250px);overflow:hidden}
+main > .page .song-card{max-height:calc(100vh - 230px)}
+main > .page .surprise-card{max-height:calc(100vh - 230px);overflow:hidden}
+footer{display:none}
+@media(max-width:900px){
+  main > .page{padding:76px 20px 95px!important}
+  .site-header .brand{font-size:22px}
+  main > .page.active.hero{display:flex!important}
+  .hero{gap:20px;text-align:center}
+  .hero-photo{height:min(43vh,390px);min-height:220px}
+}
+@media(max-width:560px){
+  .site-header .edit-btn{display:none}
+  main > .page{padding:72px 14px 92px!important}
+  main > .page .page-controls{height:78px;padding:10px 10px 14px}
+  main > .page .page-controls button{min-width:125px;padding:10px 14px}
+  main > .page .section-heading{margin-bottom:15px}
+  main > .page .gallery{max-height:calc(100vh - 220px)}
+  main > .page .letter{max-height:calc(100vh - 210px)}
+}

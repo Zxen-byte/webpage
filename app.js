@@ -1,10 +1,9 @@
 const KEY="valentine-love-letter-preview-v2";
-const publishedData = window.SITE_DATA || {};
-const defaultData = normalize(publishedData);
+const defaultData = normalize(window.SITE_DATA || {});
 let data=load(); let lightIndex=0; let draft;
 
-function load(){return structuredClone(defaultData)}
-function normalize(x){const base=publishedData||{};return {...structuredClone(base),...x,settings:{...(base.settings||{}),...(x.settings||{})},memories:Array.isArray(x.memories)?x.memories:(Array.isArray(base.memories)?base.memories:[]),reasons:Array.isArray(x.reasons)?x.reasons:(Array.isArray(base.reasons)?base.reasons:[]),events:Array.isArray(x.events)?x.events:(Array.isArray(base.events)?base.events:[])}}
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return x?normalize(x):structuredClone(defaultData)}catch{return structuredClone(defaultData)}}
+function normalize(x){return {...structuredClone(defaultData),...x,settings:{...defaultData.settings,...(x.settings||{})},memories:Array.isArray(x.memories)?x.memories:[],reasons:Array.isArray(x.reasons)?x.reasons:defaultData.reasons,events:Array.isArray(x.events)?x.events:defaultData.events}}
 function save(){localStorage.setItem(KEY,JSON.stringify(data));toast("Saved with love ♥")}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function toast(t){const x=document.getElementById("toast");x.textContent=t;x.classList.add("show");clearTimeout(window._toast);window._toast=setTimeout(()=>x.classList.remove("show"),2200)}
@@ -128,32 +127,30 @@ function setupPageNavigation(){
  showPage(start>=0?start:0,false);
 }
 
-function on(id,event,fn){const el=document.getElementById(id);if(el)el.addEventListener(event,fn);return el}
-on("editBtn","click",()=>openEditor());on("footerEdit","click",()=>openEditor());on("closeEditor","click",closeEditor);on("editorBackdrop","click",closeEditor);
+document.getElementById("editBtn").onclick=()=>openEditor();document.getElementById("footerEdit").onclick=()=>openEditor();document.getElementById("closeEditor").onclick=closeEditor;document.getElementById("editorBackdrop").onclick=closeEditor;
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>switchTab(t.dataset.tab));
-on("saveBtn","click",()=>{collectEditor();save();render();const e=document.getElementById("exportBtn");if(e)e.click();closeEditor()});
-
-on("revealBtn","click",()=>{document.getElementById("secret").hidden=false;document.getElementById("revealBtn").textContent="♥ A little piece of my heart";});
-on("audio","play",()=>{const r=document.getElementById("record");if(r)r.classList.add("playing")});on("audio","pause",()=>{const r=document.getElementById("record");if(r)r.classList.remove("playing")});
-on("addMemory","click",()=>{data.memories.push({date:"",title:"",caption:"",image:""});render()});
-on("addReason","click",()=>{data.reasons.push("Something I love about you");render()});
-on("addEvent","click",()=>{data.events.push({date:"",title:"A New Chapter",description:"Tell the story of this moment.",image:""});render()});
-on("photoUpload","change",e=>[...e.target.files].forEach(f=>compressImage(f,img=>{data.memories.push({date:"",title:"A favorite moment",caption:"",image:img});render()})));
-on("heroUpload","change",e=>{const f=e.target.files[0];if(f){const p="assets/"+f.name;data.heroImage=p;const x=document.querySelector('[data-key="heroImage"]');if(x)x.value=p;render();toast("Upload this image to assets/ in GitHub ♥")}});
-on("audioUpload","change",e=>{const f=e.target.files[0];if(f){const p="assets/"+f.name;data.audio=p;const x=document.querySelector('[data-key="audio"]');if(x)x.value=p;render();toast("Upload this audio to assets/ in GitHub ♥")}});
-on("exportBtn","click",()=>{
+document.getElementById("saveBtn").onclick=()=>{collectEditor();save();render();document.getElementById("exportBtn").click();closeEditor()};
+document.getElementById("revealBtn").onclick=()=>{document.getElementById("secret").hidden=false;document.getElementById("revealBtn").textContent="♥ A little piece of my heart";};
+document.getElementById("audio").onplay=()=>document.getElementById("record").classList.add("playing");document.getElementById("audio").onpause=()=>document.getElementById("record").classList.remove("playing");
+document.getElementById("addMemory").onclick=()=>{data.memories.push({date:"",title:"",caption:"",image:""});render()};
+document.getElementById("addReason").onclick=()=>{data.reasons.push("Something I love about you");render()};
+document.getElementById("addEvent").onclick=()=>{data.events.push({date:"",title:"A New Chapter",description:"Tell the story of this moment.",image:""});render()};
+document.getElementById("photoUpload").onchange=e=>[...e.target.files].forEach(f=>compressImage(f,img=>{data.memories.push({date:"",title:"A favorite moment",caption:"",image:img});render()}));
+document.getElementById("heroUpload").onchange=e=>{const f=e.target.files[0];if(f){const p="assets/"+f.name;data.heroImage=p;const x=document.querySelector('[data-key="heroImage"]');if(x)x.value=p;render();toast("Upload this image to assets/ in GitHub ♥")}};
+document.getElementById("audioUpload").onchange=e=>{const f=e.target.files[0];if(f){const p="assets/"+f.name;data.audio=p;const x=document.querySelector('[data-key="audio"]');if(x)x.value=p;render();toast("Upload this audio to assets/ in GitHub ♥")}};
+document.getElementById("exportBtn").onclick=()=>{
  collectEditor();
  const body="/* Generated by the Our Love Letter editor. Upload as site-data.js to GitHub. */\nconst SITE_DATA = "+JSON.stringify(data,null,2)+";\n";
  const blob=new Blob([body],{type:"text/javascript"});
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="site-data.js";a.click();
  setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast("site-data.js downloaded ♥");
-});
-on("importBtn","change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x || typeof x!=="object" || !Array.isArray(x.memories))throw Error();if(!confirm("Import this Valentine's page? Your current saved content will be replaced."))return;data=normalize(x);save();render();toast("Imported successfully ♥")}catch{toast("That backup file could not be imported.")}};r.readAsText(f)});
-on("resetBtn","click",()=>{if(confirm("Are you sure you want to reset your Valentine's page? This will remove your saved content.")){data=structuredClone(defaultData);save();render();toast("Page reset")}});
-on("lovePreview","click",()=>{collectEditor();save();closeEditor();document.body.classList.add("love-mode");window.scrollTo({top:0,behavior:"smooth"});});
-on("menuBtn","click",()=>{const n=document.getElementById("nav");n.classList.toggle("open");document.getElementById("menuBtn").setAttribute("aria-expanded",n.classList.contains("open"))});
+};
+document.getElementById("importBtn").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x || typeof x!=="object" || !Array.isArray(x.memories))throw Error();if(!confirm("Import this Valentine's page? Your current saved content will be replaced."))return;data=normalize(x);save();render();toast("Imported successfully ♥")}catch{toast("That backup file could not be imported.")}};r.readAsText(f)};
+document.getElementById("resetBtn").onclick=()=>{if(confirm("Are you sure you want to reset your Valentine's page? This will remove your saved content.")){data=structuredClone(defaultData);save();render();toast("Page reset")}};
+document.getElementById("lovePreview").onclick=()=>{collectEditor();save();closeEditor();document.body.classList.add("love-mode");window.scrollTo({top:0,behavior:"smooth"});};
+document.getElementById("menuBtn").onclick=()=>{const n=document.getElementById("nav");n.classList.toggle("open");document.getElementById("menuBtn").setAttribute("aria-expanded",n.classList.contains("open"))};
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>document.getElementById("nav").classList.remove("open"));
-on("lightClose","click",()=>document.getElementById("lightbox").hidden=true);on("lightPrev","click",()=>{lightIndex=(lightIndex-1+data.memories.length)%data.memories.length;while(!data.memories[lightIndex]?.image)lightIndex=(lightIndex-1+data.memories.length)%data.memories.length;updateLight()});on("lightNext","click",()=>{lightIndex=(lightIndex+1)%data.memories.length;while(!data.memories[lightIndex]?.image)lightIndex=(lightIndex+1)%data.memories.length;updateLight()});
+document.getElementById("lightClose").onclick=()=>document.getElementById("lightbox").hidden=true;document.getElementById("lightPrev").onclick=()=>{lightIndex=(lightIndex-1+data.memories.length)%data.memories.length;while(!data.memories[lightIndex]?.image)lightIndex=(lightIndex-1+data.memories.length)%data.memories.length;updateLight()};document.getElementById("lightNext").onclick=()=>{lightIndex=(lightIndex+1)%data.memories.length;while(!data.memories[lightIndex]?.image)lightIndex=(lightIndex+1)%data.memories.length;updateLight()};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){document.getElementById("lightbox").hidden=true;closeEditor()}if(!document.getElementById("lightbox").hidden){if(e.key==="ArrowLeft")document.getElementById("lightPrev").click();if(e.key==="ArrowRight")document.getElementById("lightNext").click()}});
-on("letterText","input",e=>{data.letter=e.currentTarget.innerHTML});on("signature","input",e=>{data.signature=e.currentTarget.innerHTML});
+document.getElementById("letterText").addEventListener("input",e=>{data.letter=e.currentTarget.innerHTML});document.getElementById("signature").addEventListener("input",e=>{data.signature=e.currentTarget.innerHTML});
 setInterval(updateCounter,1000);render();observeReveals();makeParticles();setupPageNavigation();document.addEventListener("pointerdown",tryStartBackgroundMusic);document.addEventListener("keydown",tryStartBackgroundMusic);
