@@ -9,20 +9,16 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<audio id="backgroundAudio" loop preload="auto" aria-hidden="true"></audio>
 <div id="particles" aria-hidden="true"></div>
 
 <header class="site-header">
   <a class="brand" href="#home" aria-label="Back to home">♡ <span>Our Love Letter</span></a>
-  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav">☰</button>
-  <nav id="nav" class="nav" aria-label="Main navigation">
-    <a href="#home">Home</a><a href="#story">Our Story</a><a href="#memories">Memories</a>
-    <a href="#message">My Message</a><a href="#love">Things I Love</a><a href="#song">Our Song</a><a href="#forever">Forever</a>
-  </nav>
   <button class="edit-btn" id="editBtn">Edit Website ✏️</button>
 </header>
 
 <main>
-<section id="home" class="hero section">
+<section id="home" class="page-section hero section">
   <div class="hero-copy reveal">
     <p class="eyebrow">A little something from my heart</p>
     <h1 id="heroTitle">Happy Valentine's Day <span>♥</span></h1>
@@ -36,7 +32,8 @@
   </div>
 </section>
 
-<section id="counter" class="counter section narrow reveal">
+<section id="counter" class="page-section counter section narrow reveal">
+  <div class="page-decor decor-counter" aria-hidden="true"><span class="stamp">OUR<br>STORY</span><div class="mini-photo"><img id="counterImage" alt="A favorite photo" hidden><span>♡</span></div></div>
   <p class="eyebrow">And every second since</p>
   <h2>Time Since We Met ♥</h2>
   <div class="counter-grid">
@@ -44,16 +41,18 @@
     <div><strong id="days">0</strong><span>Days</span></div><div><strong id="hours">0</strong><span>Hours</span></div>
     <div><strong id="minutes">0</strong><span>Minutes</span></div><div><strong id="seconds">0</strong><span>Seconds</span></div>
   </div>
+  <p class="counter-center-note">Still my favorite chapter. Still choosing you.<span>and the story keeps going ♥</span></p>
   <p id="anniversaryText" class="muted"></p>
 </section>
 
-<section id="memories" class="section">
+<section id="memories" class="page-section section">
   <div class="section-heading reveal"><p class="eyebrow">The moments I keep close</p><h2>Our Memories</h2><p>Little pieces of our story, saved forever.</p></div>
   <div id="gallery" class="gallery"></div>
 </section>
 
-<section id="message" class="section letter-section">
+<section id="message" class="page-section section letter-section">
   <div class="section-heading reveal"><p class="eyebrow">Words I want you to keep</p><h2>My Message For You ♥</h2></div>
+  <div class="page-decor decor-letter" aria-hidden="true"><div class="mini-photo"><img id="messageImage" alt="A favorite photo" hidden><span>♡</span></div><span class="hand-note">for you, always</span></div>
   <article class="letter reveal">
     <div id="letterText" class="letter-text" tabindex="0">
       <p><em>My love,</em></p>
@@ -65,17 +64,20 @@
   </article>
 </section>
 
-<section id="story" class="section">
+<section id="story" class="page-section section">
+  <div class="story-photo page-photo"><img id="storyImage" alt="A story photo" hidden><span>♡</span><small>A little piece of our story</small></div>
   <div class="section-heading reveal"><p class="eyebrow">How we became us</p><h2>Our Story</h2></div>
   <div id="timeline" class="timeline"></div>
 </section>
 
-<section id="love" class="section blush">
+<section id="love" class="page-section section blush">
+  <div class="love-photo page-photo"><img id="loveImage" alt="A favorite photo" hidden><span>♥</span><small>one of my favorite views</small></div>
   <div class="section-heading reveal"><p class="eyebrow">A few of a million reasons</p><h2>Things I Love About You ♥</h2></div>
   <div id="reasons" class="reason-grid"></div>
 </section>
 
-<section id="song" class="section song-section">
+<section id="song" class="page-section section song-section">
+  <div class="song-photo page-photo"><img id="songImage" alt="Our song photo" hidden><span>♪</span><small>our soundtrack</small></div>
   <div class="song-card reveal">
     <div class="record" id="record">♥</div>
     <div><p class="eyebrow">Press play when you miss me</p><h2>Our Song 🎵</h2><p id="songText">This song always reminds me of you.</p>
@@ -84,7 +86,8 @@
   </div>
 </section>
 
-<section id="surprise" class="section surprise">
+<section id="surprise" class="page-section section surprise">
+  <div class="surprise-photo page-photo"><img id="surpriseImage" alt="A surprise photo" hidden><span>✦</span><small>a little surprise</small></div>
   <div class="surprise-card reveal">
     <p class="eyebrow">One more thing...</p>
     <h2>There's Something I Want To Tell You ♥</h2>
@@ -93,18 +96,23 @@
   </div>
 </section>
 
-<section id="forever" class="section ending">
+<section id="forever" class="page-section section ending">
   <div class="ending-inner reveal">
     <p class="eyebrow">Until every tomorrow</p><h2>Thank You For Being You ♥</h2>
     <p id="finalMessage">If I could choose one person to make memories with over and over again, I would choose you every single time.</p>
-    <div id="finalPhoto" class="final-photo"></div>
+    <div id="finalPhoto" class="final-photo"><img id="finalPhotoImg" alt="Our final memory" hidden><span class="final-placeholder">Your final photo ♥</span></div>
     <div class="forever">Forever & Always ♥</div>
     <small id="finalSignature">[Your Name]</small>
   </div>
 </section>
+
+<div class="page-controls" aria-label="Page navigation">
+  <button id="pagePrev" class="page-arrow" type="button" aria-label="Previous page">← <span>Back</span></button>
+  <div class="page-indicator"><span id="pageNumber">1</span> / <span id="pageTotal">9</span></div>
+  <button id="pageNext" class="page-arrow primary" type="button" aria-label="Next page"><span id="nextLabel">Next</span> →</button>
+</div>
 </main>
 
-<footer><span>Made with love.</span><button id="footerEdit">Edit Website</button></footer>
 
 <!-- Editor -->
 <aside id="editor" class="editor" aria-label="Website editor" aria-hidden="true">
@@ -125,12 +133,23 @@
   </div>
 
   <div id="tab-memoriesTab" class="tab-panel">
-    <div class="panel-actions"><button class="secondary-btn" id="addMemory">+ Add Memory</button><label class="upload-btn">Upload Photos<input id="photoUpload" type="file" accept="image/*" multiple hidden></label></div>
+    <div class="panel-actions"><button class="secondary-btn" id="addMemory">+ Add Memory</button></div>
     <div id="memoryEditorList"></div>
     <hr><div class="panel-actions"><button class="secondary-btn" id="addReason">+ Add Reason</button><button class="secondary-btn" id="addEvent">+ Add Story Event</button></div>
     <div id="reasonEditorList"></div><div id="eventEditorList"></div>
-    <hr><label>Hero / final photo <span class="upload-btn">Choose image<input id="heroUpload" type="file" accept="image/*" hidden></span></label>
-    <label>Local song <span class="upload-btn">Choose audio<input id="audioUpload" type="file" accept="audio/*" hidden></span></label>
+    <hr><p class="muted">Media is published through GitHub too. Put your files in <b>assets/</b>, then enter their relative paths below.</p>
+    <label>Hero / final photo<div class="photo-input"><input data-key="heroImage" placeholder="assets/hero.jpg"><button type="button" class="upload-btn" data-upload="heroImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <div class="photo-paths-title">Extra page photos</div>
+    <p class="muted">Add a different photo to any page. Put photos in <b>assets/</b> and enter the path.</p>
+    <label>Time Together photo<div class="photo-input"><input data-key="counterImage" placeholder="assets/time.jpg"><button type="button" class="upload-btn" data-upload="counterImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Love Letter photo<div class="photo-input"><input data-key="messageImage" placeholder="assets/letter.jpg"><button type="button" class="upload-btn" data-upload="messageImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Our Story photo<div class="photo-input"><input data-key="storyImage" placeholder="assets/story.jpg"><button type="button" class="upload-btn" data-upload="storyImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Reasons photo<div class="photo-input"><input data-key="loveImage" placeholder="assets/love.jpg"><button type="button" class="upload-btn" data-upload="loveImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Our Song photo<div class="photo-input"><input data-key="songImage" placeholder="assets/song-cover.jpg"><button type="button" class="upload-btn" data-upload="songImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Surprise photo<div class="photo-input"><input data-key="surpriseImage" placeholder="assets/surprise.jpg"><button type="button" class="upload-btn" data-upload="surpriseImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Our Song file<input data-key="audio" placeholder="assets/song.mp3"></label>
+    <label>Background song<input data-key="backgroundAudio" placeholder="assets/background.mp3"></label>
+    <div class="music-settings"><strong>Background music</strong><p class="muted">Browsers require a tap/click before music can start automatically.</p><label class="check-row"><input id="backgroundMusicToggle" type="checkbox"> Enable background music</label><label>Volume<input id="backgroundMusicVolume" type="range" min="0" max="0.5" step="0.01" value="0.18"></label></div>
   </div>
 
   <div id="tab-style" class="tab-panel">
@@ -141,22 +160,22 @@
   </div>
 
   <div id="tab-data" class="tab-panel">
-    <p class="muted">Your page saves locally in this browser. Export a backup before moving it to another device.</p>
-    <button class="secondary-btn full" id="exportBtn">Export Valentine's Page</button>
-    <label class="upload-btn full">Import Valentine's Page<input id="importBtn" type="file" accept="application/json" hidden></label>
-    <button class="danger-btn full" id="resetBtn">Reset Website</button>
+    <p class="muted"><b>GitHub-only publishing:</b> your browser can preview edits, but it cannot safely write to GitHub. Use the button below to download an updated <code>site-data.js</code>, then upload/replace that file in your GitHub repository and commit it.</p>
+    <button class="secondary-btn full" id="exportBtn">Download site-data.js</button>
+    <button class="danger-btn full" id="resetBtn">Reset Preview</button>
     <button class="primary-btn full" id="lovePreview">Preview Love Mode ♥</button>
   </div>
-  <div class="editor-foot"><button class="primary-btn full" id="saveBtn">Save Changes</button></div>
+  <div class="editor-foot"><button class="primary-btn full" id="saveBtn">Save for GitHub ♥</button></div>
 </aside>
 <div id="editorBackdrop" class="backdrop" hidden></div>
 
 <!-- Lightbox -->
 <div id="lightbox" class="modal" hidden role="dialog" aria-modal="true" aria-label="Memory photo">
  <button class="modal-close" id="lightClose">×</button><button class="light-nav prev" id="lightPrev" aria-label="Previous">‹</button>
- <figure><img id="lightImg" alt=""><figcaption id="lightCaption"></figcaption></figure><button class="light-nav next" id="lightNext" aria-label="Next">›</button>
+ <figure><img id="lightImg" alt="" decoding="async"><figcaption id="lightCaption"></figcaption></figure><button class="light-nav next" id="lightNext" aria-label="Next">›</button>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="site-data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
