@@ -32,6 +32,13 @@ function render(){
  const sl=document.getElementById("songLink");sl.href=data.songLink||"#";sl.hidden=!data.songLink;
  document.getElementById("finalMessage").textContent=data.finalMessage;document.getElementById("finalSignature").textContent=data.name;
  setImage("heroImage",data.heroImage,"heroPlaceholder");
+ setPageImage("counterImage",data.counterImage);
+ setPageImage("messageImage",data.messageImage);
+ setPageImage("storyImage",data.storyImage);
+ setPageImage("loveImage",data.loveImage);
+ setPageImage("songImage",data.songImage);
+ setPageImage("surpriseImage",data.surpriseImage);
+ setPageImage("finalPhotoImg",data.heroImage);
  renderGallery();renderTimeline();renderReasons();renderEditorLists();updateCounter();renderAudio();renderBackgroundMusic();
  document.querySelectorAll("[data-style]").forEach(el=>el.value=data.settings[el.dataset.style]||"");
  const bmToggle=document.getElementById("backgroundMusicToggle");if(bmToggle)bmToggle.checked=data.backgroundMusicEnabled!==false;
@@ -55,10 +62,12 @@ function setImage(id,src,placeholder){
 }
 function setPageImage(id,src){
  const im=document.getElementById(id); if(!im)return;
- const holder=im.closest('.page-photo,.mini-photo');
- if(src){im.hidden=false;im.src=src;if(holder)holder.classList.add('has-image')}
- else{im.hidden=true;im.removeAttribute('src');if(holder)holder.classList.remove('has-image')}
- im.onerror=()=>{im.hidden=true;if(holder)holder.classList.remove('has-image')};
+ const holder=im.closest('.page-photo,.mini-photo,.final-photo');
+ const cleanSrc=String(src||'').trim();
+ const showFallback=()=>{im.hidden=true;im.removeAttribute('src');if(holder)holder.classList.remove('has-image')};
+ im.onerror=showFallback;
+ if(cleanSrc){im.hidden=false;im.src=cleanSrc;if(holder)holder.classList.add('has-image')}
+ else showFallback();
 }
 function renderGallery(){
  const g=document.getElementById("gallery");
@@ -106,6 +115,10 @@ function closeEditor(){document.getElementById("editor").classList.remove("open"
 function switchTab(tab){document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));document.querySelectorAll(".tab-panel").forEach(x=>x.classList.toggle("active",x.id==="tab-"+tab))}
 function collectEditor(){document.querySelectorAll("[data-key]").forEach(el=>data[el.dataset.key]=el.value);document.querySelectorAll("[data-style]").forEach(el=>data.settings[el.dataset.style]=el.value)}
 function pickImage(cb){const input=document.createElement("input");input.type="file";input.accept="image/*";input.onchange=()=>{const f=input.files[0];if(f)compressImage(f,cb)};input.click()}
+
+function pickAndStoreImage(key){
+  pickImage(dataUrl=>{data[key]=dataUrl; const input=document.querySelector(`[data-key="${key}"]`); if(input) input.value=dataUrl; render(); toast('Photo added to this page ♥')});
+}
 function compressImage(file,cb){if(!file.type.startsWith("image/"))return toast("Please choose an image file.");const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const max=1600,s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.82))};im.src=r.result};r.readAsDataURL(file)}
 function closeLight(){
   const box=document.getElementById("lightbox");
@@ -150,6 +163,10 @@ document.getElementById("addReason").onclick=()=>{data.reasons.push("Something I
 document.getElementById("addEvent").onclick=()=>{data.events.push({date:"",title:"A New Chapter",description:"Tell the story of this moment.",image:""});render()};
 document.getElementById("backgroundMusicToggle").onchange=e=>{data.backgroundMusicEnabled=e.target.checked;if(e.target.checked)startBackgroundMusic();else document.getElementById("backgroundAudio").pause()};
 document.getElementById("backgroundMusicVolume").oninput=e=>{data.backgroundMusicVolume=Number(e.target.value);document.getElementById("backgroundAudio").volume=data.backgroundMusicVolume};
+['heroImage','counterImage','messageImage','storyImage','loveImage','songImage','surpriseImage'].forEach(key=>{
+  const b=document.querySelector(`[data-upload="${key}"]`);
+  if(b)b.onclick=()=>pickAndStoreImage(key);
+});
 document.getElementById("exportBtn").onclick=()=>downloadGitHubConfig();
 document.getElementById("resetBtn").onclick=()=>{if(confirm("Reset the editor preview to the GitHub version?")){data=normalize(window.SITE_DATA||defaultData);render();toast("Preview reset")}};
 document.getElementById("lovePreview").onclick=()=>{collectEditor();render();closeEditor();document.body.classList.add("love-mode");goToPage(0);};

@@ -41,6 +41,7 @@
     <div><strong id="days">0</strong><span>Days</span></div><div><strong id="hours">0</strong><span>Hours</span></div>
     <div><strong id="minutes">0</strong><span>Minutes</span></div><div><strong id="seconds">0</strong><span>Seconds</span></div>
   </div>
+  <p class="counter-center-note">Still my favorite chapter. Still choosing you.<span>and the story keeps going ♥</span></p>
   <p id="anniversaryText" class="muted"></p>
 </section>
 
@@ -137,15 +138,15 @@
     <hr><div class="panel-actions"><button class="secondary-btn" id="addReason">+ Add Reason</button><button class="secondary-btn" id="addEvent">+ Add Story Event</button></div>
     <div id="reasonEditorList"></div><div id="eventEditorList"></div>
     <hr><p class="muted">Media is published through GitHub too. Put your files in <b>assets/</b>, then enter their relative paths below.</p>
-    <label>Hero / final photo<input data-key="heroImage" placeholder="assets/hero.jpg"></label>
+    <label>Hero / final photo<div class="photo-input"><input data-key="heroImage" placeholder="assets/hero.jpg"><button type="button" class="upload-btn" data-upload="heroImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
     <div class="photo-paths-title">Extra page photos</div>
     <p class="muted">Add a different photo to any page. Put photos in <b>assets/</b> and enter the path.</p>
-    <label>Time Together photo<input data-key="counterImage" placeholder="assets/time.jpg"></label>
-    <label>Love Letter photo<input data-key="messageImage" placeholder="assets/letter.jpg"></label>
-    <label>Our Story photo<input data-key="storyImage" placeholder="assets/story.jpg"></label>
-    <label>Reasons photo<input data-key="loveImage" placeholder="assets/love.jpg"></label>
-    <label>Our Song photo<input data-key="songImage" placeholder="assets/song-cover.jpg"></label>
-    <label>Surprise photo<input data-key="surpriseImage" placeholder="assets/surprise.jpg"></label>
+    <label>Time Together photo<div class="photo-input"><input data-key="counterImage" placeholder="assets/time.jpg"><button type="button" class="upload-btn" data-upload="counterImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Love Letter photo<div class="photo-input"><input data-key="messageImage" placeholder="assets/letter.jpg"><button type="button" class="upload-btn" data-upload="messageImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Our Story photo<div class="photo-input"><input data-key="storyImage" placeholder="assets/story.jpg"><button type="button" class="upload-btn" data-upload="storyImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Reasons photo<div class="photo-input"><input data-key="loveImage" placeholder="assets/love.jpg"><button type="button" class="upload-btn" data-upload="loveImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Our Song photo<div class="photo-input"><input data-key="songImage" placeholder="assets/song-cover.jpg"><button type="button" class="upload-btn" data-upload="songImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
+    <label>Surprise photo<div class="photo-input"><input data-key="surpriseImage" placeholder="assets/surprise.jpg"><button type="button" class="upload-btn" data-upload="surpriseImage">Upload</button></div><small class="field-help">Use an <b>assets/filename.jpg</b> path, or upload a photo here for preview.</small></label>
     <label>Our Song file<input data-key="audio" placeholder="assets/song.mp3"></label>
     <label>Background song<input data-key="backgroundAudio" placeholder="assets/background.mp3"></label>
     <div class="music-settings"><strong>Background music</strong><p class="muted">Browsers require a tap/click before music can start automatically.</p><label class="check-row"><input id="backgroundMusicToggle" type="checkbox"> Enable background music</label><label>Volume<input id="backgroundMusicVolume" type="range" min="0" max="0.5" step="0.01" value="0.18"></label></div>
