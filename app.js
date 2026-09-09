@@ -527,18 +527,15 @@ const continueNo=document.getElementById("continueNo");
 const continueArea=document.getElementById("continueChoiceArea");
 
 function moveNoButton(){
-  if(!continueNo||!continueArea)return;
-  const areaRect=continueArea.getBoundingClientRect();
-  const buttonRect=continueNo.getBoundingClientRect();
-  const pad=8;
-  // Keep No strictly on the RIGHT half so it can never cover Yes.
-  const minX=Math.max(pad, areaRect.width/2 + 8);
-  const maxX=Math.max(minX, areaRect.width-buttonRect.width-pad);
-  const maxY=Math.max(pad, areaRect.height-buttonRect.height-pad);
-  const x=minX + Math.random()*Math.max(0,maxX-minX);
-  const y=pad + Math.random()*Math.max(0,maxY-pad);
-  continueNo.style.left=`${x}px`;
-  continueNo.style.top=`${y}px`;
+  if(!continueNo)return;
+  // Keep No in its fixed right-hand layout slot. Only add a small transform,
+  // so it can never cover or push the Yes button.
+  const x=(Math.random()*70)-15;
+  const y=(Math.random()*50)-25;
+  continueNo.style.left="";
+  continueNo.style.top="";
+  continueNo.style.setProperty("--no-x",`${x}px`);
+  continueNo.style.setProperty("--no-y",`${y}px`);
 }
 continueNo?.addEventListener("pointerenter",e=>{
   e.preventDefault();

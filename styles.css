@@ -608,15 +608,24 @@ main{padding-top:0}
   color:var(--muted);
   margin:0 auto 20px;
 }
+/* ===== Continue question buttons: fixed side-by-side layout ===== */
 .continue-choice-area{
   position:relative;
   width:min(430px,100%);
-  height:145px;
-  margin:4px auto 0;
+  height:92px;
+  margin:8px auto 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  overflow:visible;
 }
 .yes-choice,.no-choice{
-  position:absolute;
-  top:52px;
+  position:relative !important;
+  left:auto !important;
+  top:auto !important;
+  inset:auto !important;
+  flex:0 0 108px;
   width:108px;
   min-width:108px;
   height:50px;
@@ -627,13 +636,12 @@ main{padding-top:0}
   font-weight:700;
   font-size:15px;
   cursor:pointer;
-  transition:transform .16s ease,box-shadow .16s ease,left .18s ease,top .18s ease;
+  transition:transform .16s ease,box-shadow .16s ease;
 }
-/* Yes is always on the LEFT. */
 .yes-choice{
-  left:calc(50% - 118px);
-  background:var(--primary);
+  order:1;
   z-index:2;
+  background:var(--primary);
   color:#fff;
   box-shadow:0 12px 28px rgba(139,30,63,.22);
 }
@@ -641,20 +649,23 @@ main{padding-top:0}
   transform:translateY(-2px) scale(1.04);
   box-shadow:0 16px 34px rgba(139,30,63,.28);
 }
-/* No is always on the RIGHT and is constrained to the right half. */
 .no-choice{
-  left:calc(50% + 10px);
-  background:#d9a1ad;
+  order:2;
   z-index:3;
+  background:#d9a1ad;
   color:#fff;
   box-shadow:0 10px 24px rgba(91,38,57,.12);
+  /* JavaScript only translates this button; its layout position stays on the right. */
+  --no-x:0px;
+  --no-y:0px;
+  transform:translate(var(--no-x),var(--no-y));
 }
 @media(max-width:700px){
   .continue-card{padding:34px 20px}
-  .continue-choice-area{height:165px;width:100%;max-width:360px}
-  .yes-choice{left:calc(50% - 118px)}
-  .no-choice{left:calc(50% + 10px)}
+  .continue-choice-area{width:100%;max-width:300px;height:92px;gap:12px}
+  .yes-choice,.no-choice{flex-basis:108px;width:108px;min-width:108px}
 }
+
 
 /* ===== Memory card game ===== */
 .memory-game-section{
