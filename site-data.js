@@ -11,7 +11,7 @@ window.SITE_DATA = {
   "songText": "This song always reminds me of you.",
   "songLink": "",
   "metDate": "2024-06-14T19:00",
-  "anniversary": "2026-07-28",
+  "anniversary": "",
   "finalMessage": "If I could choose one person to make memories with over and over again, I would choose you every single time.",
   "heroImage": "",
   "counterImage": "",

@@ -18,32 +18,33 @@
 </header>
 
 <main>
-<section id="home" class="page-section hero section access-page">
-  <div class="access-card">
-    <div class="access-heart">♥</div>
-    <p class="eyebrow">A little secret first</p>
-    <h1>Our Love Letter</h1>
-    <p class="access-subtitle">This little page is just for you. Enter the password to open it. ♥</p>
-    <label class="access-label" for="passwordInput">Password</label>
-    <div class="access-input-wrap">
-      <input id="passwordInput" type="password" autocomplete="off" placeholder="Enter the password" aria-describedby="passwordHint">
-      <button type="button" id="togglePassword" class="password-toggle" aria-label="Show password">Show</button>
+<section id="home" class="page-section hero section">
+  <div class="hero-copy reveal">
+    <p class="eyebrow">A little something from my heart</p>
+    <h1 id="heroTitle">Happy Valentine's Day <span>♥</span></h1>
+    <h2 id="heroTo">To My Favorite Person</h2>
+    <p id="heroSubtitle">Every moment with you is a memory I never want to forget.</p>
+    <button class="primary-btn" id="openHeart">Open My Heart ♥</button>
+
+      <p id="passwordError" class="gate-error" role="alert" aria-live="polite"></p>
     </div>
-    <p id="passwordHint" class="access-hint">Only someone special should know this. ♡</p>
-    <p id="passwordError" class="access-error" role="alert" aria-live="polite"></p>
+  </div>
+  <div class="hero-photo frame">
+    <img id="heroImage" alt="Our favorite memory" hidden>
+    <div id="heroPlaceholder" class="photo-placeholder"><span>♡</span><b>A place for your favorite photo</b><small>Make this moment yours</small></div>
   </div>
 </section>
 
 <section id="anniversary-gate" class="page-section section anniversary-gate">
-  <div class="access-card">
-    <div class="access-heart">♡</div>
+  <div class="anniversary-card reveal visible">
+    <div class="gate-heart">♡</div>
     <p class="eyebrow">One more little question</p>
     <h2>What's the date of our anniversary?</h2>
-    <p class="access-subtitle">Type the numbers only. The <b>/</b> will be added automatically.</p>
-    <label class="access-label" for="anniversaryInput">Our anniversary</label>
-    <input id="anniversaryInput" class="date-gate-input" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="MM/DD/YY" aria-describedby="anniversaryHint">
-    <p id="anniversaryHint" class="access-hint">For example: 072826 → 07/28/26</p>
-    <p id="anniversaryError" class="access-error" role="alert" aria-live="polite"></p>
+    <p>Type the numbers only. The <b>/</b> will be added automatically.</p>
+    <label for="anniversaryInput">Our anniversary</label>
+    <input id="anniversaryInput" class="date-gate-input" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="MM/DD/YY">
+    <small>For example: 072826 → 07/28/26</small>
+    <p id="anniversaryError" class="gate-error" role="alert" aria-live="polite"></p>
   </div>
 </section>
 
@@ -123,7 +124,7 @@
 
 <div class="page-controls" aria-label="Page navigation">
   <button id="pagePrev" class="page-arrow" type="button" aria-label="Previous page">← <span>Back</span></button>
-  <div class="page-indicator"><span id="pageNumber">1</span> / <span id="pageTotal">10</span></div>
+  <div class="page-indicator"><span id="pageNumber">1</span> / <span id="pageTotal">9</span></div>
   <button id="pageNext" class="page-arrow primary" type="button" aria-label="Next page"><span id="nextLabel">Next</span> →</button>
 </div>
 </main>
@@ -144,7 +145,6 @@
     <label>Song link <input data-key="songLink" type="url" placeholder="https://..."></label>
     <label>We met <input data-key="metDate" type="datetime-local"></label>
     <label>Anniversary <input data-key="anniversary" type="date"></label>
-    <label>Private password <input data-key="accessPassword" type="password" autocomplete="new-password"></label>
     <label>Final message<textarea data-key="finalMessage"></textarea></label>
   </div>
 
