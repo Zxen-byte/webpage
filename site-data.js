@@ -1,7 +1,6 @@
-// Edit this file in GitHub to publish your Valentine website.
-// Keep image/audio files in the assets/ folder and use paths such as "assets/hero.jpg".
-window.SITE_DATA = {
-  "heroTitle": "Hello Aizen ♥",
+/* Edit this file to publish your Valentine website. */
+const SITE_DATA = {
+  "heroTitle": "Happy Valentine's Day ♥",
   "heroTo": "To My Favorite Person",
   "heroSubtitle": "Every moment with you is a memory I never want to forget.",
   "name": "[Your Name]",
@@ -15,8 +14,8 @@ window.SITE_DATA = {
   "finalMessage": "If I could choose one person to make memories with over and over again, I would choose you every single time.",
   "heroImage": "",
   "audio": "",
-  "backgroundAudio": "assets/music.mp3",
-  "backgroundMusicEnabled": true,
+  "backgroundAudio": "",
+  "backgroundMusicEnabled": false,
   "backgroundMusicVolume": 0.18,
   "settings": {
     "primary": "#8b1e3f",
