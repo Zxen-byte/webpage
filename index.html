@@ -33,6 +33,7 @@
 </section>
 
 <section id="counter" class="page-section counter section narrow reveal">
+  <div class="page-decor decor-counter" aria-hidden="true"><span class="stamp">OUR<br>STORY</span><div class="mini-photo"><img id="counterImage" alt="A favorite photo" hidden><span>♡</span></div></div>
   <p class="eyebrow">And every second since</p>
   <h2>Time Since We Met ♥</h2>
   <div class="counter-grid">
@@ -50,6 +51,7 @@
 
 <section id="message" class="page-section section letter-section">
   <div class="section-heading reveal"><p class="eyebrow">Words I want you to keep</p><h2>My Message For You ♥</h2></div>
+  <div class="page-decor decor-letter" aria-hidden="true"><div class="mini-photo"><img id="messageImage" alt="A favorite photo" hidden><span>♡</span></div><span class="hand-note">for you, always</span></div>
   <article class="letter reveal">
     <div id="letterText" class="letter-text" tabindex="0">
       <p><em>My love,</em></p>
@@ -62,16 +64,19 @@
 </section>
 
 <section id="story" class="page-section section">
+  <div class="story-photo page-photo"><img id="storyImage" alt="A story photo" hidden><span>♡</span><small>A little piece of our story</small></div>
   <div class="section-heading reveal"><p class="eyebrow">How we became us</p><h2>Our Story</h2></div>
   <div id="timeline" class="timeline"></div>
 </section>
 
 <section id="love" class="page-section section blush">
+  <div class="love-photo page-photo"><img id="loveImage" alt="A favorite photo" hidden><span>♥</span><small>one of my favorite views</small></div>
   <div class="section-heading reveal"><p class="eyebrow">A few of a million reasons</p><h2>Things I Love About You ♥</h2></div>
   <div id="reasons" class="reason-grid"></div>
 </section>
 
 <section id="song" class="page-section section song-section">
+  <div class="song-photo page-photo"><img id="songImage" alt="Our song photo" hidden><span>♪</span><small>our soundtrack</small></div>
   <div class="song-card reveal">
     <div class="record" id="record">♥</div>
     <div><p class="eyebrow">Press play when you miss me</p><h2>Our Song 🎵</h2><p id="songText">This song always reminds me of you.</p>
@@ -81,6 +86,7 @@
 </section>
 
 <section id="surprise" class="page-section section surprise">
+  <div class="surprise-photo page-photo"><img id="surpriseImage" alt="A surprise photo" hidden><span>✦</span><small>a little surprise</small></div>
   <div class="surprise-card reveal">
     <p class="eyebrow">One more thing...</p>
     <h2>There's Something I Want To Tell You ♥</h2>
@@ -93,7 +99,7 @@
   <div class="ending-inner reveal">
     <p class="eyebrow">Until every tomorrow</p><h2>Thank You For Being You ♥</h2>
     <p id="finalMessage">If I could choose one person to make memories with over and over again, I would choose you every single time.</p>
-    <div id="finalPhoto" class="final-photo"></div>
+    <div id="finalPhoto" class="final-photo"><img id="finalPhotoImg" alt="Our final memory" hidden><span class="final-placeholder">Your final photo ♥</span></div>
     <div class="forever">Forever & Always ♥</div>
     <small id="finalSignature">[Your Name]</small>
   </div>
@@ -132,6 +138,14 @@
     <div id="reasonEditorList"></div><div id="eventEditorList"></div>
     <hr><p class="muted">Media is published through GitHub too. Put your files in <b>assets/</b>, then enter their relative paths below.</p>
     <label>Hero / final photo<input data-key="heroImage" placeholder="assets/hero.jpg"></label>
+    <div class="photo-paths-title">Extra page photos</div>
+    <p class="muted">Add a different photo to any page. Put photos in <b>assets/</b> and enter the path.</p>
+    <label>Time Together photo<input data-key="counterImage" placeholder="assets/time.jpg"></label>
+    <label>Love Letter photo<input data-key="messageImage" placeholder="assets/letter.jpg"></label>
+    <label>Our Story photo<input data-key="storyImage" placeholder="assets/story.jpg"></label>
+    <label>Reasons photo<input data-key="loveImage" placeholder="assets/love.jpg"></label>
+    <label>Our Song photo<input data-key="songImage" placeholder="assets/song-cover.jpg"></label>
+    <label>Surprise photo<input data-key="surpriseImage" placeholder="assets/surprise.jpg"></label>
     <label>Our Song file<input data-key="audio" placeholder="assets/song.mp3"></label>
     <label>Background song<input data-key="backgroundAudio" placeholder="assets/background.mp3"></label>
     <div class="music-settings"><strong>Background music</strong><p class="muted">Browsers require a tap/click before music can start automatically.</p><label class="check-row"><input id="backgroundMusicToggle" type="checkbox"> Enable background music</label><label>Volume<input id="backgroundMusicVolume" type="range" min="0" max="0.5" step="0.01" value="0.18"></label></div>
