@@ -216,7 +216,7 @@ window.addEventListener("pageshow",()=>{
 });
 
 /* Page-by-page navigation: one section visible at a time. */
-const pageIds = ["home","anniversary-gate","counter","continue-gate","memories","message","story","love","song","surprise","forever"];
+const pageIds = ["home","anniversary-gate","counter","continue-gate","memories","memory-game","message","story","love","song","surprise","forever"];
 let currentPage = 0;
 let anniversaryVerified = false;
 let continueVerified = false;
@@ -231,11 +231,11 @@ function showPage(index, updateHash=true){
   const total=document.getElementById("pageTotal");
   const label=document.getElementById("nextLabel");
   if(prev) prev.disabled=currentPage===0;
-  if(next) next.disabled=currentPage===pageIds.length-1 || currentPage===3;
+  if(next) next.disabled=currentPage===pageIds.length-1 || currentPage===3 || currentPage===5;
   if(num) num.textContent=String(currentPage+1);
   if(total) total.textContent=String(pageIds.length);
   if(label){
-    label.textContent=currentPage===pageIds.length-1?"Done":(currentPage===0?"Next":(currentPage===1?"Continue":(currentPage===3?"Choose Yes":"Next")));
+    label.textContent=currentPage===pageIds.length-1?"Done":(currentPage===0?"Next":(currentPage===1?"Continue":(currentPage===3?"Choose Yes":(currentPage===5?"Matching...":"Next"))));
   }
   if(updateHash) history.replaceState(null,"","#"+pageIds[currentPage]);
   const page=document.getElementById(pageIds[currentPage]);
@@ -263,6 +263,111 @@ function checkAnniversary(){
   if(error) error.textContent="Not quite — think of our special date again. ♥";
   input?.classList.add("shake"); setTimeout(()=>input?.classList.remove("shake"),450); input?.focus(); return false;
 }
+
+/* ===== Memory matching game ===== */
+const memoryGameImages = Array.from({length:18},(_,i)=>`assets/game-photos/${i+1}.avif`);
+const memoryPairs = memoryGameImages.flatMap(src=>[src,src]);
+let memoryDeck = [];
+let memoryFlipped = [];
+let memoryMatched = new Set();
+let memoryBusy = false;
+let memoryFinished = false;
+
+function shuffleDeck(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function updateGameStatus(){
+  const el=document.getElementById("gamePairsFound");
+  if(el) el.textContent=String(Math.floor(memoryMatched.size/2));
+}
+function createMemoryGame(){
+  const board=document.getElementById("memoryGame");
+  if(!board)return;
+  memoryDeck=shuffleDeck(memoryPairs);
+  memoryFlipped=[];
+  memoryMatched=new Set();
+  memoryBusy=false;
+  memoryFinished=false;
+  const complete=document.getElementById("gameComplete");
+  if(complete)complete.hidden=true;
+  board.classList.remove("game-won");
+  const heartLayout=[
+    [null,null,0,1,null,2,3,null,null],
+    [null,4,5,6,7,8,9,10,null],
+    [11,12,13,14,15,16,17,18,19],
+    [null,20,21,22,23,24,25,26,null],
+    [null,null,27,28,29,30,31,null,null],
+    [null,null,null,32,33,34,null,null,null],
+    [null,null,null,null,35,null,null,null,null]
+  ];
+  board.innerHTML=heartLayout.flatMap(row=>row.map(index=>{
+    if(index===null)return '<span class="memory-game-spacer" aria-hidden="true"></span>';
+    const src=memoryDeck[index];
+    return `<button class="memory-game-card" type="button" data-game-index="${index}" aria-label="Hidden memory card ${index+1}">
+      <span class="memory-card-inner">
+        <span class="memory-card-face memory-card-back" aria-hidden="true"><span>♥</span></span>
+        <span class="memory-card-face memory-card-front">
+          <img src="${src}" alt="Memory ${Math.floor(index/2)+1}" loading="eager">
+        </span>
+      </span>
+    </button>`;
+  })).join("");
+  board.querySelectorAll(".memory-game-card").forEach(card=>{
+    card.addEventListener("click",()=>flipMemoryCard(Number(card.dataset.gameIndex)));
+  });
+  updateGameStatus();
+}
+function setCardFlipped(index, flipped){
+  const card=document.querySelector(`.memory-game-card[data-game-index="${index}"]`);
+  if(card)card.classList.toggle("is-flipped",flipped);
+}
+function setCardMatched(index){
+  const card=document.querySelector(`.memory-game-card[data-game-index="${index}"]`);
+  if(card)card.classList.add("is-matched");
+}
+function finishMemoryGame(){
+  if(memoryFinished)return;
+  memoryFinished=true;
+  memoryBusy=true;
+  document.querySelectorAll(".memory-game-card").forEach(card=>card.classList.add("is-matched","celebrate"));
+  const board=document.getElementById("memoryGame");
+  const complete=document.getElementById("gameComplete");
+  if(board)board.classList.add("game-won");
+  if(complete)complete.hidden=false;
+  setTimeout(()=>goToPage(6),1900);
+}
+function flipMemoryCard(index){
+  if(memoryBusy || memoryMatched.has(index) || memoryFlipped.includes(index))return;
+  if(memoryFlipped.length>=2)return;
+  memoryFlipped.push(index);
+  setCardFlipped(index,true);
+  if(memoryFlipped.length<2)return;
+
+  memoryBusy=true;
+  const [a,b]=memoryFlipped;
+  if(memoryDeck[a]===memoryDeck[b]){
+    memoryMatched.add(a); memoryMatched.add(b);
+    setCardMatched(a); setCardMatched(b);
+    memoryFlipped=[];
+    memoryBusy=false;
+    updateGameStatus();
+    if(memoryMatched.size===memoryDeck.length) setTimeout(finishMemoryGame,450);
+  }else{
+    setTimeout(()=>{
+      setCardFlipped(a,false);
+      setCardFlipped(b,false);
+      memoryFlipped=[];
+      memoryBusy=false;
+    },850);
+  }
+}
+createMemoryGame();
+
 document.getElementById("pagePrev").onclick=()=>goToPage(currentPage-1);
 document.getElementById("pageNext").onclick=()=>{
   if(currentPage===0)return goToPage(1);
