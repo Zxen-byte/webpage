@@ -344,7 +344,9 @@ let currentPage = 0;
 let anniversaryVerified = false;
 let continueVerified = false;
 function showPage(index, updateHash=true){
+  const previousPage=currentPage;
   currentPage = Math.max(0, Math.min(pageIds.length-1, index));
+  if(currentPage===3 && previousPage!==3) resetNoButton();
   document.querySelectorAll(".page-section").forEach((section,i)=>{
     section.classList.toggle("active-page", i===currentPage);
   });
@@ -526,17 +528,52 @@ const continueYes=document.getElementById("continueYes");
 const continueNo=document.getElementById("continueNo");
 const continueArea=document.getElementById("continueChoiceArea");
 
+function resetNoButton(){
+  if(!continueNo)return;
+  continueNo.classList.remove("no-roaming");
+  continueNo.style.removeProperty("--no-left");
+  continueNo.style.removeProperty("--no-top");
+  continueNo.style.removeProperty("--no-x");
+  continueNo.style.removeProperty("--no-y");
+}
+
 function moveNoButton(){
   if(!continueNo)return;
-  // Keep No in its fixed right-hand layout slot. Only add a small transform,
-  // so it can never cover or push the Yes button.
-  const x=(Math.random()*70)-15;
-  const y=(Math.random()*50)-25;
-  continueNo.style.left="";
-  continueNo.style.top="";
-  continueNo.style.setProperty("--no-x",`${x}px`);
-  continueNo.style.setProperty("--no-y",`${y}px`);
+  // After the first interaction, let No escape the card and roam around the
+  // usable viewport. Keep it away from the header and bottom navigation.
+  continueNo.classList.add("no-roaming");
+  const w=window.innerWidth;
+  const h=window.innerHeight;
+  const bw=continueNo.offsetWidth || 108;
+  const bh=continueNo.offsetHeight || 50;
+  const margin=18;
+  const headerSafe=92;
+  const footerSafe=92;
+  const minX=margin;
+  const maxX=Math.max(minX,w-bw-margin);
+  const minY=Math.min(headerSafe,Math.max(margin,h-bh-footerSafe));
+  const maxY=Math.max(minY,h-bh-footerSafe);
+
+  // Try several positions and avoid the Yes button/card center so the joke
+  // never blocks the actual choice.
+  const yesRect=continueYes?.getBoundingClientRect();
+  let x=minX,y=minY,ok=false;
+  for(let i=0;i<30;i++){
+    x=minX+Math.random()*Math.max(1,maxX-minX);
+    y=minY+Math.random()*Math.max(1,maxY-minY);
+    const r={left:x,right:x+bw,top:y,bottom:y+bh};
+    const overlapsYes=yesRect && !(r.right<yesRect.left-24 || r.left>yesRect.right+24 || r.bottom<yesRect.top-24 || r.top>yesRect.bottom+24);
+    if(!overlapsYes){ok=true;break;}
+  }
+  if(!ok){x=maxX;y=maxY;}
+  continueNo.style.setProperty("--no-left",`${Math.round(x)}px`);
+  continueNo.style.setProperty("--no-top",`${Math.round(y)}px`);
 }
+
+resetNoButton();
+window.addEventListener("resize",()=>{
+  if(continueNo?.classList.contains("no-roaming")) moveNoButton();
+});
 continueNo?.addEventListener("pointerenter",e=>{
   e.preventDefault();
   moveNoButton();

@@ -651,14 +651,26 @@ main{padding-top:0}
 }
 .no-choice{
   order:2;
-  z-index:3;
+  z-index:20;
   background:#d9a1ad;
   color:#fff;
   box-shadow:0 10px 24px rgba(91,38,57,.12);
-  /* JavaScript only translates this button; its layout position stays on the right. */
+  /* Starts beside Yes; after interaction JS temporarily turns it into a
+     viewport-level runaway button so it can escape the card completely. */
   --no-x:0px;
   --no-y:0px;
   transform:translate(var(--no-x),var(--no-y));
+}
+.no-choice.no-roaming{
+  position:fixed !important;
+  left:0 !important;
+  top:0 !important;
+  margin:0 !important;
+  transform:translate3d(var(--no-left),var(--no-top),0) !important;
+  z-index:9998;
+}
+.no-choice.no-roaming:hover{
+  transform:translate3d(var(--no-left),var(--no-top),0) scale(1.03) !important;
 }
 @media(max-width:700px){
   .continue-card{padding:34px 20px}
